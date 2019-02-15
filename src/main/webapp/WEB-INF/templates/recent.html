@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div th:fragment="recentIdeas" class="well food-img-container small" th:each="idea : ${recientes}">
+            <h5 class="text-center" th:text="*{idea.alimento.nombre}"></h5>
+            <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
+            <div class="food-data-over-img">
+                <ul class="col-xs-offset-6 text-right list-unstyled">
+                    <li>
+                        <span th:text="*{idea.tiempo}">15</span> <span class="glyphicon glyphicon-time"></span>
+                    </li>
+                    <li>
+                        <span th:text="*{idea.porciones}">2</span> <span class="glyphicon glyphicon-user"></span>
+                    </li>
+                    <li>
+                        <span th:text="*{idea.costo}">~20</span> <span class="glyphicon glyphicon-usd"></span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="col-xs-4">
+                    <div class="col-xs-6">
+                        <span th:text="*{idea.tiempo}">15</span> 
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="col-xs-6">
+                        <span th:text="*{idea.porciones}">2</span> 
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-user"></span>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="col-xs-6">
+                        <span th:text="*{idea.costo}">~20</span> 
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-usd"></span>
+                    </div>
+                </div>
+                <div class="col-xs-6" th:text="*{idea.usuario.userName}">
+                    Username
+                </div>
+                <div class="col-xs-6 text-right" th:text="${#dates.format(idea.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                    Fecha
+                </div>
+            </div>
+        </div>
+
+        <div id="masIdeas">
+
+        </div>
+    </body>
+</html>

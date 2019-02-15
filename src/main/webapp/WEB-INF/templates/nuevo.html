@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Nueva receta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <div id="overlay" class="container" th:fragment="nuevo">
+            <h3 class="text-center">Agergar Idea</h3>
+            <form action="Nueva" th:action="@{/Nueva}" th:object="${idea}" th:method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <div>
+                        <label for="alimento.nombre" class="small">Alimento</label>
+                    </div>
+                    <div>
+                        <input type="text" th:field="*{alimento}" class="form-control borderless underlined" list="alimentos"/>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group nuevo-alimento">
+                        <div>
+                            <label for="alimento.descripcion" class="small" data-toggle="tooltip" title="Describe brevemente en qué consiste este alimento.">Descripci&oacute;n</label>
+                        </div>
+                        <div>
+                            <textarea th:field="*{alimento.descripcion}" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group nuevo-alimento">
+                        <div>
+                            <label for="alimento.tipo" class="small">Tipo</label>
+                        </div>
+                        <div class="col-xs-4 checkbox" th:each="t : ${tiposAlimento}">
+                            <label th:for="${#ids.next('alimento.tipos')}">
+                                <input type="checkbox" th:field="*{alimento.tipos}" th:value="${{t}}" />
+                                <span th:text="${t.tipo}">Desayuno</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-8">
+                        <div id="img-upload-btn" class="thumbnail text-over btn btn-default new-pic-upl">
+                            <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/image-icon.png}" class="img-responsive"/>
+                            <div id="loading" class="caption over" style="display: none;">
+                                <img src="/IdeaFood/resources/img/loading.gif" th:src="@{/resources/img/loading.gif}" class="center"/>
+                            </div>
+                            <div class="caption over">
+                                Agregar foto
+                            </div>
+                        </div>
+                        <input id="file" name="foto" type="file" accept="image/*" style="display: none;"/>
+                    </div>
+                    <div class="col-xs-4 form-group">
+                        <div>
+                            <label for="porciones" class="small">Porciones</label>
+                        </div>
+                        <div>
+                            <input type="number" th:field="*{porciones}" min="0" class="form-control text-right"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-group">
+                        <div>
+                            <label for="costo" class="small">Costo</label>
+                        </div>
+                        <div>
+                            <input type="number" th:field="*{costo}" step="0.1" min="0.0" class="form-control text-right"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-group">
+                        <div>
+                            <label for="tiempo" class="small">Tiempo</label>
+                        </div>
+                        <div>
+                            <input type="number" th:field="*{tiempo}" min="0" class="form-control text-right" />
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12 btn-group btn-group-justified form-group">
+                        <a id="receta-selector" class="btn btn-default">
+                            Receta
+                        </a>
+                        <a id="puntoVenta-selector" class="btn btn-default">
+                            Fast food
+                        </a>
+                    </div>
+                    
+                    <div id="ingredientes-div" class="form-group" style="display: none;">
+                        <div class="col-xs-12">
+                            <label for="ingredientes">Ingredientes</label>
+                        </div>
+                        <div class="col-xs-3 form-group">
+                            <label for="cantidad" class="small">Cant.</label>
+                        </div>
+                        <div class="col-xs-3 form-group">
+                            <label for="unidad" class="small">Unid.</label>
+                        </div>
+                        <div class="col-xs-6 form-group">
+                            <label for="ingrediente" class="small">Ingrediente</label>
+                        </div>
+
+                        <div id="ingredientes0" class="ingrediente-row">
+                            <div class="col-xs-3 form-group">
+                                <input type="number" id="ingredientes0.cantidad" name="ingredientes[0].cantidad" min="0" step="0.1" class="form-control input-sm text-right" value="0" />
+                            </div>
+                            <div class="col-xs-3 form-group">
+                                <select id="ingredientes0.unidad" name="ingredientes[0].unidad" class="form-control input-sm">
+                                    <option th:each="u : ${unidades}"
+                                            th:value="${u.nombre}"
+                                            th:text="${u.abr}"> 
+                                        pz.
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-xs-5 form-group">
+                                <input type="text" id="ingredientes0.ingrediente.nombre" name="ingredientes[0].ingrediente.nombre" class="form-control input-sm" list="ingredientes"/>
+                            </div>
+                            <div id="remove-ingredientes0" class="col-xs-1 text-danger remove-row-button" style="display: none;">
+                                <span class="glyphicon glyphicon-remove" ></span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div id="ingrediente-plus-button" class="circle-btn bg-yellow col-xs-offset-6">
+                                <span class="glyphicon glyphicon-plus"></span>                            
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div id="receta-div" class="col-xs-12 form-group" style="display: none;">
+                        <div>
+                            <label for="receta">Preparaci&oacute;n</label>
+                        </div>
+                        <div>
+                            <textarea th:field="*{receta}" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div id="puntoVenta-div" class="col-xs-12 form-group" style="display: none;">
+                        <div>
+                            <label for="puntoVenta">Punto de venta</label>
+                        </div>
+                        <div>
+                            <input type="text" th:field="*{puntoVenta.nombre}" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-success btn-block">Agregar</button>
+                </div>
+                <datalist id="ingredientes">
+                    <option th:each="ingrediente : ${ingredientes}"
+                            th:value="${ingrediente.nombre}"
+                            th:text="${ingrediente.nombre}">
+                        pan
+                    </option>
+                </datalist>
+                
+                <datalist id="alimentos">
+                    <option th:each="alimento : ${alimentos}"
+                            th:value="${alimento.nombre}">
+                    </option>
+                </datalist>
+                <input type="hidden" th:field="*{usuario.userName}">
+            </form>
+        </div>
+    </body>
+</html>

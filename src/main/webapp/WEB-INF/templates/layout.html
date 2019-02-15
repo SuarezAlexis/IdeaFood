@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+      th:fragment="layout (title, content)">
+    <head>
+        <title th:replace="${title}">Layout Title</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="/IdeaFood/resources/css/bootstrap.css" th:href="@{/resources/css/bootstrap.css}"/>
+        <link rel="stylesheet" href="/IdeaFood/resources/css/Site.css" th:href="@{/resources/css/Site.css}"/>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" th:href="@{/}">IdeaFood</a>
+                </div>
+                <div id="navbar">
+                    <ul class="nav navbar-nav navbar-right list-inline">
+                        <li>
+                            <div id="list-button" class="circle-btn bg-yellow">
+                                <span class="glyphicon glyphicon-list" data-toggle="tooltip" title="Ver Recientes"></span>
+                            </div>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <div id="plus-button" class="circle-btn bg-yellow">
+                                <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Agregar Idea"></span>
+                            </div>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <div id="user-button" class="circle-btn bg-yellow">
+                                <a href="#">
+                                    <span class="glyphicon glyphicon-user" data-toggle="tooltip" th:title="${sec.principal.username}"></span>
+                                </a>
+                            </div>
+                        </li>
+                        <li sec:authorize="isAnonymous()">
+                            <div id="user-button" class="circle-btn bg-yellow">
+                                <a href="/IdeaFood/Ingresar">
+                                    <span class="glyphicon glyphicon-user" data-toggle="tooltip" title="Iniciar sesi&oacute;n"></span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div th:replace="${content}">
+                <p>Layout content</p>
+            </div>
+            
+            <div sec:authorize="isAuthenticated()" th:replace="~{nuevo::nuevo}"  >
+                <p>Overlay</p>
+            </div>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="/IdeaFood/resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.js}"></script>
+        <script type="text/javascript" >
+            $(document).ready(function() {
+                //Inicializar plus-button para mostrar overlay
+                $('#plus-button').on('click', function() {
+                    $('#plus-button > span').toggleClass('glyphicon-plus');
+                    $('#plus-button > span').toggleClass('glyphicon-remove');
+                    
+                    if( $('#overlay').css('display') === 'block') {
+                        $('#overlay').css('display','none');
+                        $('#plus-button > span').attr('title','Agregar Idea');
+                    }
+                    else {
+                        $('#overlay').css('display','block');
+                        $('#plus-button > span').attr('title','Cerrar');
+                    }
+                });
+                //Inicializar list-button para redirecionar
+                $('#list-button').on('click', function() {
+                    location.replace("http://localhost:8084/IdeaFood/Recientes");
+                });
+                
+                
+                //Inicializar remove-button de primer ingrediente
+                initRemoveIng(0);
+                
+                //Inicializar plus-button para agregar ingredientes
+                $('#ingrediente-plus-button').on('click', function(){
+                    var lastIdx = $('.ingrediente-row').length - 1;
+                    if(lastIdx < 1) {
+                        $('#remove-ingredientes0').show();
+                    }
+                    var lastDiv = $('.ingrediente-row').last();
+                    lastDiv.wrap('<p/>');
+                    var newDiv = lastDiv.parent().html();
+                    newDiv = newDiv.replace(new RegExp('ingredientes' + lastIdx,'g'),'ingredientes'+(lastIdx + 1));
+                    newDiv = newDiv.replace(new RegExp('ingredientes\\[' + lastIdx + ']','g'),'ingredientes['+ (lastIdx + 1) +']');
+                    lastDiv.after(newDiv); 
+                    lastDiv.unwrap();
+                    
+                    initRemoveIng(lastIdx+1);
+                });
+                
+                //Inicializar botones selectores de receta/puntoventa
+                $('#receta-selector').on('click', function() {
+                    $('#puntoVenta-div').hide();
+                    $('#puntoVenta-selector').removeClass('active');
+                    $('#receta-div').show();
+                    $('#ingredientes-div').show();
+                    $('#receta-selector').addClass('active');
+                    
+                });
+                
+                $('#puntoVenta-selector').on('click', function() {
+                    $('#receta-div').hide();
+                    $('#ingredientes-div').hide();
+                    $('#receta-selector').removeClass('active');
+                    $('#puntoVenta-div').show();
+                    $('#puntoVenta-selector').addClass('active');
+                });
+                
+                //Inicializar click en imagen para subir archivo
+                $('#img-upload-btn').on('click', function() {
+                    $('#file').click();
+                });
+                
+                //Inicializar función para nuevo alimento
+                $('#alimento').on('change paste', function() {
+                    var texto = $(this).val();
+                    $('#alimentos option').each(function() {
+                        if($(this).val() === texto) {
+                            $('.nuevo-alimento').each(function() { $(this).hide(); });
+                            return false;
+                        } else {
+                            $('.nuevo-alimento').each(function() { $(this).show(); });
+                        }
+                    });
+                });
+                
+                //Inicializar recarga de feed
+                window.onscroll = function() {
+                    if( document.URL.indexOf("/Recientes") > 0 && document.documentElement.scrollHeight - document.documentElement.clientHeight == document.documentElement.scrollTop ) {
+                        var page = $('#masIdeas').attr("data-pag");
+                        if(page > 1) {
+                            $.ajax({
+                                type: 'GET',
+                                url: '/IdeaFood/RequestRecientes',
+                                data: { pag: page },
+                                success: function (result) {
+                                    if (result) {
+                                        $('#masIdeas').replaceWith(result);
+                                    } else {
+                                        alert('There was an error loading more posts!');
+                                    }
+                                },
+                                error: function () {
+                                    alert('There was an error loading more posts!');
+                                }
+                            });
+                        }
+                    }
+                };
+            });
+            
+            //Indicador de carga
+            $(document).ajaxStart(function () {
+                $('#loading').show();
+            });
+            $(document).ajaxComplete(function () {
+                $('#loading').hide();
+            });
+            
+            //Inicializa remove-button dado su índice 
+            function initRemoveIng(idx) {
+                //Encuentra botón y asigna función
+                $('#remove-ingredientes'+idx).on('click', function() {
+                    //Elimina renglón propio
+                    idx = this.id[this.id.length-1];
+                    $('#ingredientes'+ idx).remove();
+                    //Si no es el último renglón reorganiza IDs
+                    var ingLength = $('.ingrediente-row').length;
+                    if(ingLength > idx) {
+                        //Para los renglones posteriores
+                        for(var i = (+idx + 1); i <= ingLength; i++) {
+                            //Actualiza IDs de elementos
+                            $('[id*=ingredientes'+ i +']').each(function() {
+                                this.id = this.id.replace('ingredientes' + i, 'ingredientes' + (i-1));
+                            });
+                            //Actualiza nombres de elementos
+                            $('[name*="ingredientes['+ i +']"]').each(function() {
+                                this.name = this.name.replace('ingredientes[' + i, 'ingredientes[' + (i-1));
+                            });
+                        }
+                    }
+                    if(ingLength == 1) {
+                        $('#remove-ingredientes0').hide();
+                    }
+                });
+            };
+        </script>
+        <script src="/IdeaFood/resources/js/Site.js" th:src="@{/resources/js/Site.js}"></script>
+    </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Iniciar sesi&oacute;n</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <section>
+            <div>
+                <h2>Iniciar sesi&oacute;n</h2>
+            </div>
+            <div>
+                <form th:action="@{/Ingresar}" th:method="post" th:object="${usuario}"> 
+                    <div th:if="${#fields.hasErrors('global')}" class="alert alert-danger">
+                            <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></li>
+                    </div>
+                    <fieldset>
+                        <div class="form-group">
+                            <div>
+                                <label for="username_or_email">Nombre de usuario</label>
+                            </div>
+                            <div>
+                                <input type="text" id="usernameOrEmail" name="usernameOrEmail" class="form-control" th:field="*{usernameOrEmail}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <label for="password">Contrase&ntilde;a</label>
+                            </div>
+                            <div>
+                                <input type="password" id="password" name="password" class="form-control" th:field="*{password}"/>
+                            </div>
+                            <div class="text-right">
+                                <small>
+                                    <a href="#">Olvid&eacute; mi contrase&ntilde;a</a>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="recordar" name="recordar" class="checkbox-inline" th:field="*{recordar}"/>
+                            <label for="recordar" class="inline">Recordarme en este equipo</label>
+                        </div>
+                        <div>
+                            <input name="submit" type="submit" value="Ingresar" class="btn btn-success btn-block"/>
+                        </div>
+                        <div>
+                            <p>
+                                &iquest;No tienes cuenta? Registrate <a href="/IdeaFood/Registrar" th:href="@{/Registrar}" >aqu&iacute;.</a>
+                            </p>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </body>
+</html>

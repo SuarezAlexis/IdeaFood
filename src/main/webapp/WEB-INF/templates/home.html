@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Inicio</title>
+    </head>
+    <body>
+        <section>
+            <div id="search" class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Buscar"/>
+                <div class="input-group-addon btn">
+                    <span class="glyphicon glyphicon-search"></span>
+                </div>
+            </div>
+            
+            <h4 class="text-center">&iquest;Qu&eacute; comer ahora?</h4>
+            
+            <div id="sugerencias" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div th:each="idea : ${sugerencias}" class="item" th:class="${ideaStat.first}? 'item active' : 'item'">
+                        <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive" style="width: 100%;"/>
+                        <div class="carousel-caption">
+                            <ul class="col-xs-offset-6 text-right list-unstyled">
+                                <li>
+                                    <span th:text="*{idea.tiempo}">15</span> <span class="glyphicon glyphicon-time"></span>
+                                </li>
+                                <li>
+                                    <span th:text="*{idea.porciones}">2</span> <span class="glyphicon glyphicon-user"></span>
+                                </li>
+                                <li>
+                                    <span th:text="*{idea.costo}">~20</span> <span class="glyphicon glyphicon-usd"></span>
+                                </li>
+                            </ul>
+                            <h5 class="text-center" th:text="*{idea.alimento.nombre}"></h5>
+                            <div class="col-xs-6" th:text="*{idea.usuario.userName}">
+                                Username
+                            </div>
+                            <div class="col-xs-6 text-right" th:text="${#dates.format(idea.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                                Fecha
+                            </div>
+                        </div>
+                    </div>
+                    <a class="left carousel-control" data-slide="prev" href="#sugerencias">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <span class="sr-only">Anterior</span>
+                    </a>
+                    
+                    <!--
+                    <div class="well food-img-container small" th:each="idea : ${sugerencias}">
+                        <h5 class="text-center" th:text="*{idea.alimento.nombre}"></h5>
+                        <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
+                        <div class="food-data-over-img">
+                            <ul class="col-xs-offset-6 text-right list-unstyled">
+                                <li>
+                                    <span th:text="*{idea.tiempo}">15</span> <span class="glyphicon glyphicon-time"></span>
+                                </li>
+                                <li>
+                                    <span th:text="*{idea.porciones}">2</span> <span class="glyphicon glyphicon-user"></span>
+                                </li>
+                                <li>
+                                    <span th:text="*{idea.costo}">~20</span> <span class="glyphicon glyphicon-usd"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="col-xs-4">
+                                <div class="col-xs-6">
+                                    <span th:text="*{idea.tiempo}">15</span> 
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="col-xs-6">
+                                    <span th:text="*{idea.porciones}">2</span> 
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="glyphicon glyphicon-user"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="col-xs-6">
+                                    <span th:text="*{idea.costo}">~20</span> 
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="glyphicon glyphicon-usd"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" th:text="*{idea.usuario.userName}">
+                                Username
+                            </div>
+                            <div class="col-xs-6 text-right" th:text="${#dates.format(idea.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                                Fecha
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <a class="right carousel-control" data-slide="next" href="#sugerencias">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    <span class="sr-only">Siguiente</span>
+                </a>
+            </div>
+            
+            <div id="filtro">
+                <h4 class="text-center">Filtros</h4>
+                <button class="btn btn-xs btn-default pull-right">Filtrar</button>
+            </div>
+            
+            <div id="feed">
+                
+            </div>
+
+        </section>
+    </body>
+</html>
