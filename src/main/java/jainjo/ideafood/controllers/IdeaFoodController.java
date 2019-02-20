@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,9 @@ public class IdeaFoodController {
     
     @Autowired
     private AuthenticationManager authManager;
+    
+    @Autowired
+    private RememberMeServices rememberMeServices;
     
     /***************************** Constantes *****************************/
     
@@ -160,7 +165,7 @@ public class IdeaFoodController {
     }
     
     @RequestMapping(value = "/Ingresar", method = RequestMethod.POST)
-    public ModelAndView login(@ModelAttribute("usuario") IngresoDto ingresoDto, BindingResult result, HttpServletRequest request) {
+    public ModelAndView login(@ModelAttribute("usuario") IngresoDto ingresoDto, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         if(!result.hasErrors()) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(ingresoDto.getUsernameOrEmail(), ingresoDto.getPassword());
             authToken.setDetails(new WebAuthenticationDetails(request));
@@ -170,6 +175,8 @@ public class IdeaFoodController {
                 securityContext.setAuthentication(authentication);
                 HttpSession session = request.getSession(true);
                 session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext);
+                if(ingresoDto.getRecordar())
+                    rememberMeServices.loginSuccess(request, response, authentication);
             } catch (Exception e) {
                 result.addError(new ObjectError("usuario","El usuario o contraseña son incorrectos."));
                 return new ModelAndView("logIn","usuario",ingresoDto);

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsService userDetailsService;
     
+    private final String REMEMBER_ME_KEY = "ideaFoodKey";
+    private final String REMEMBER_ME_COOKIE_NAME = "IdeaFood";
+    private final String REMEMBER_ME_PARAMETER = "recordar";
     
     public SecurityConfig() {
         super();
@@ -37,7 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/Ingresar")
                 .loginProcessingUrl("Ingresar")
                 .and()
-            .rememberMe().key("ideaFoodKey").and();
+            .rememberMe()
+                .key(REMEMBER_ME_KEY)
+                .userDetailsService(userDetailsService)
+                .rememberMeCookieName(REMEMBER_ME_COOKIE_NAME)
+                .rememberMeParameter(REMEMBER_ME_PARAMETER);
     }
     
     @Override
@@ -78,6 +88,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+    
+    @Bean
+    public RememberMeServices rememberMeServices() {
+        RememberMeServices rememberMeServices = new TokenBasedRememberMeServices(REMEMBER_ME_KEY, userDetailsService);
+        ((TokenBasedRememberMeServices)rememberMeServices).setCookieName(REMEMBER_ME_COOKIE_NAME);
+        ((TokenBasedRememberMeServices)rememberMeServices).setParameter(REMEMBER_ME_PARAMETER);
+        return rememberMeServices;
     }
 
 }
