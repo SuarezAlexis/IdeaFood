@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,6 +55,9 @@ public class IdeaFoodController {
     
     @Autowired
     private RememberMeServices rememberMeServices;
+    
+    @Autowired
+    private CookieClearingLogoutHandler cookieClearingLogoutHandler;
     
     /***************************** Constantes *****************************/
     
@@ -219,5 +224,15 @@ public class IdeaFoodController {
         else {
             return new ModelAndView("home");
         }
+    }
+    
+    @RequestMapping(value = "/Salir")
+    public String logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            cookieClearingLogoutHandler.logout(request, response, auth);
+            request.logout();
+        }
+        return "redirect:/home";
     }
 }

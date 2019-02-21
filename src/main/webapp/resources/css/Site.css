@@ -105,6 +105,18 @@
     margin-right: auto;
 }
 
+.navbar-collapse {
+    margin-top: 50px;
+}
+
+#user-button a {
+    color: #333;
+}
+
+#main-content {
+    padding-top: 60px;
+}
+
 @media (min-width: 768px) {
     .circle-btn {
         padding-left: 3.5px;
@@ -130,5 +142,9 @@
     
     .food-data-over-img {
         bottom: 7%;
+    }
+    
+    .navbar-collapse {
+        margin: 0px;
     }
 }   

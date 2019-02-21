@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 @Configuration
@@ -58,12 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProvider());
-         /*
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .usersByUsernameQuery("SELECT UserName username, Password password, true enabled FROM Usuario WHERE UserName = ?")
-                .authoritiesByUsernameQuery("SELECT UserName username, Nombre authority FROM Usuario_Permiso WHERE UserName = ?");
-        */
     }
     
     @Bean
@@ -72,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     
     @Bean
+    @Override
     public UserDetailsService userDetailsService() {
         return new IdeaFoodUserDetailsService();
     }
@@ -97,5 +92,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         ((TokenBasedRememberMeServices)rememberMeServices).setParameter(REMEMBER_ME_PARAMETER);
         return rememberMeServices;
     }
-
+    
+    @Bean
+    public CookieClearingLogoutHandler cookieClearingHandler() {
+        return new CookieClearingLogoutHandler("JSESSIONID",REMEMBER_ME_COOKIE_NAME);
+    }
 }

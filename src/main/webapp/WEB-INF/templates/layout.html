@@ -29,24 +29,29 @@
                             </div>
                         </li>
                         <li sec:authorize="isAuthenticated()">
-                            <div id="user-button" class="circle-btn bg-yellow">
-                                <a href="#">
-                                    <span class="glyphicon glyphicon-user" data-toggle="tooltip" th:title="${sec.principal.username}"></span>
-                                </a>
+                            <div id="user-button" class="circle-btn bg-yellow" data-toggle="collapse" data-target="#userMenu">
+                                <!--<span class="glyphicon glyphicon-user" data-toggle="tooltip" th:title="${sec.principal.username}"></span>-->
+                                <span class="glyphicon glyphicon-user" data-toggle="tooltip" th:title="${sec.principal.username}"></span>
                             </div>
                         </li>
                         <li sec:authorize="isAnonymous()">
                             <div id="user-button" class="circle-btn bg-yellow">
-                                <a href="/IdeaFood/Ingresar">
+                                <a href="/IdeaFood/Ingresar" th:href="@{Ingresar}">
                                     <span class="glyphicon glyphicon-user" data-toggle="tooltip" title="Iniciar sesi&oacute;n"></span>
                                 </a>
                             </div>
                         </li>
                     </ul>
                 </div>
+                <div sec:authorize="isAuthenticated()" class="collapse navbar-collapse text-right" id="userMenu">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#">Perfil <span class="glyphicon glyphicon-user"></span> </a></li>
+                        <li><a href="/IdeaFood/Salir" th:href="@{Salir}">Cerrar sesi&oacute;n <span class="glyphicon glyphicon-log-out"></span></a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
-        <div class="container">
+        <div class="container" id="main-content">
             <div th:replace="${content}">
                 <p>Layout content</p>
             </div>
