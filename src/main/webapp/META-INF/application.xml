@@ -12,8 +12,8 @@
   <!-- The default service should be listed first -->
   <module>
     <web>
-      <web-uri>/IdeaFood</web-uri>
-      <context-root>/IdeaFood</context-root>
+      <web-uri>IdeaFood</web-uri>
+      <context-root>IdeaFood</context-root>
     </web>
   </module>
   
