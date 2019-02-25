@@ -4,4 +4,5 @@
     <threadsafe>true</threadsafe>
     <runtime>java8</runtime>
     <sessions-enabled>true</sessions-enabled>
+    <application>digitalmenudev-180918</application>
 </appengine-web-app>

@@ -1,5 +1,6 @@
 package jainjo.ideafood.config;
 
+import com.google.appengine.api.utils.SystemProperty;
 import jainjo.ideafood.dao.TipoAlimentoDaoJdbc;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
@@ -13,10 +14,13 @@ public class DaoConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        //dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        //dataSource.setUrl("jdbc:mysql:///IdeaFood?cloudSqlInstance=digitalmenudev-180918:us-central1:jainjo-mysql&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
-        dataSource.setDriverClassName("com.mysql.jdbc.GoogleDriver");
-        dataSource.setUrl("jdbc:google:mysql://digitalmenudev-180918:us-central1:jainjo-mysql/IdeaFood?socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
+        if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+            dataSource.setUrl("jdbc:google:mysql://digitalmenudev-180918:us-central1:jainjo-mysql/IdeaFood?socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
+            dataSource.setDriverClassName("com.mysql.jdbc.GoogleDriver");
+        } else {
+            dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+            dataSource.setUrl("jdbc:mysql:///IdeaFood?cloudSqlInstance=digitalmenudev-180918:us-central1:jainjo-mysql&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
+        }
         dataSource.setUsername("root");
         dataSource.setPassword("0FbObz5gaFAdjxin");
         
