@@ -13,8 +13,8 @@ public class DaoConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql:///IdeaFood?cloudSqlInstance=digitalmenudev-180918:us-central1:jainjo-mysql&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
+        dataSource.setDriverClassName("com.mysql.jdbc.GoogleDriver");
+        dataSource.setUrl("jdbc:google:mysql:///IdeaFood?cloudSqlInstance=digitalmenudev-180918:us-central1:jainjo-mysql&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false");
         dataSource.setUsername("root");
         dataSource.setPassword("0FbObz5gaFAdjxin");
         
