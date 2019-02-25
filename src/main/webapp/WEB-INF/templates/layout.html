@@ -20,7 +20,9 @@
                     <ul class="nav navbar-nav navbar-right list-inline">
                         <li>
                             <div id="list-button" class="circle-btn bg-yellow">
-                                <span class="glyphicon glyphicon-list" data-toggle="tooltip" title="Ver Recientes"></span>
+                                <a href="/IdeaFood/Recientes" th:href="@{Recientes}">
+                                    <span class="glyphicon glyphicon-list" data-toggle="tooltip" title="Ver Recientes"></span>
+                                </a>
                             </div>
                         </li>
                         <li sec:authorize="isAuthenticated()">
@@ -79,11 +81,6 @@
                         $('#plus-button > span').attr('title','Cerrar');
                     }
                 });
-                //Inicializar list-button para redirecionar
-                $('#list-button').on('click', function() {
-                    location.replace("http://localhost:8084/IdeaFood/Recientes");
-                });
-                
                 
                 //Inicializar remove-button de primer ingrediente
                 initRemoveIng(0);
