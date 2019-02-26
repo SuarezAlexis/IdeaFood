@@ -13,7 +13,7 @@
                 
                 <div class="well food-img-container small" th:each="idea : ${recientes}">
                     <h5 class="text-center" th:text="*{idea.alimento.nombre}"></h5>
-                    <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
+                    <img src="/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
                     <div class="food-data-over-img">
                         <ul class="col-xs-offset-6 text-right list-unstyled">
                             <li>
@@ -70,7 +70,7 @@
             </div>
             
             <div id="loading">
-                <img src="/IdeaFood/resources/img/loading.gif" th:src="@{/resources/img/loading.gif}" class="center"/>
+                <img src="/resources/img/loading.gif" th:src="@{/resources/img/loading.gif}" class="center"/>
             </div>
            
         </section>

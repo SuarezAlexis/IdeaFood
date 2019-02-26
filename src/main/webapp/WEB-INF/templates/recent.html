@@ -8,7 +8,7 @@
     <body>
         <div th:fragment="recentIdeas" class="well food-img-container small" th:each="idea : ${recientes}">
             <h5 class="text-center" th:text="*{idea.alimento.nombre}"></h5>
-            <img src="/IdeaFood/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
+            <img src="/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive"/>
             <div class="food-data-over-img">
                 <ul class="col-xs-offset-6 text-right list-unstyled">
                     <li>
