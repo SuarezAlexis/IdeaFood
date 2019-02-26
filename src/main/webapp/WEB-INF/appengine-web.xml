@@ -5,4 +5,5 @@
     <threadsafe>true</threadsafe>
     <runtime>java8</runtime>
     <sessions-enabled>true</sessions-enabled>
+    <context-root>IdeaFood</context-root>
 </appengine-web-app>
