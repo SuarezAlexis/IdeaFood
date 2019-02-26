@@ -1,5 +1,6 @@
 package jainjo.ideafood.controllers;
 
+import com.google.appengine.api.utils.SystemProperty;
 import jainjo.ideafood.dto.*;
 import jainjo.ideafood.model.*;
 import jainjo.ideafood.services.IdeaService;
@@ -62,6 +63,8 @@ public class IdeaFoodController {
     /***************************** Constantes *****************************/
     
     private final int RECENTS_PAGE_SIZE = 2;
+    private final String APP_PATH = "\\IdeaFood\\src\\main\\webapp";
+    private final String FOOD_IMG_RELATIVE_PATH = "\\resources\\img\\food\\";
     
     /************************** Model Attributes **************************/
     @ModelAttribute("tiposAlimento")
@@ -132,9 +135,15 @@ public class IdeaFoodController {
         if(imageData.length() > 0)
         {
             Calendar calendar = Calendar.getInstance();
-            String basePath = "C:\\Users\\alexis.suarez\\Documents\\NetBeansProjects\\IdeaFood\\src\\main\\webapp";
+            String basePath;
+            if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+                basePath = "C:\\Users\\alexis.suarez\\Documents\\NetBeansProjects";
+            } else {
+                basePath = "\\home\\alexis_suarez_fi";
+            }
+            basePath += APP_PATH;
             String extension = imageData.substring(11,imageData.indexOf(";"));
-            String relativePath = "\\resources\\img\\food\\" + calendar.get(Calendar.YEAR) + "\\" + (calendar.get(Calendar.MONTH) + 1) + "\\" + calendar.get(Calendar.DAY_OF_MONTH);
+            String relativePath = FOOD_IMG_RELATIVE_PATH + calendar.get(Calendar.YEAR) + "\\" + (calendar.get(Calendar.MONTH) + 1) + "\\" + calendar.get(Calendar.DAY_OF_MONTH);
             String fileName = UUID.randomUUID() + "." + extension;
             File file = new File(basePath + relativePath);
             if(!file.exists())
