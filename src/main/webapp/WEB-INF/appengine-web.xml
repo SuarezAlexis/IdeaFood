@@ -4,4 +4,5 @@
     <threadsafe>true</threadsafe>
     <runtime>java8</runtime>
     <sessions-enabled>true</sessions-enabled>
+    <public-root>/IdeaFood</public-root>
 </appengine-web-app>
