@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Bricks!</title>
+    </head>
+    <body>
+        <section>
+            <button class="btn btn-success btn-block" onclick="startGame()">Start Game!</button>
+            <script type="text/javascript">                   
+                var ball;
+                var aimingLine;
+                var level;
+                var gameOver;
+                var cubes = [];
+                var SCREEN_HEIGHT = 568;
+                var SCREEN_WIDTH = 320;
+                var CUBE_SIZE = 30;
+                var FRAME_RATE = 50;
+                var ROWS = 16;
+                var COLUMNS = 10;
+                var BALL_SPEED = 10;
+                var BALL_COLOR = "mediumpurple";
+                var BALL_COUNTOUR = "hotpink";
+                var CUBE_COLOR = "azure";
+                var CUBE_COUNTOUR = "cadetblue";
+                var LINE_COLOR = "darkcyan";
+
+
+                function startGame() {
+                    ball = new component( CUBE_SIZE, CUBE_SIZE, BALL_COLOR,(SCREEN_WIDTH/2) - CUBE_SIZE/2, SCREEN_HEIGHT - CUBE_SIZE/2, "ball");
+                    level = new component("15px","Consolas","black",15,20,"text");
+                    gameOver = new component("30px","Consolas","black",85,SCREEN_HEIGHT/2,"text");
+                    gameArea.start();
+                    aimingLine = new line(LINE_COLOR);
+                }
+
+                var gameArea = {
+                    canvas: document.createElement('canvas'),
+                    start: function() {
+                        this.canvas.width = SCREEN_WIDTH;
+                        this.canvas.height = SCREEN_HEIGHT;
+                        this.context = this.canvas.getContext("2d");
+                        document.getElementById("main-content").insertBefore(this.canvas, document.getElementById("main-content").childNodes[0]);
+                        //document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                        this.interval = setInterval(updateGameArea, 1000/FRAME_RATE);
+                        this.canvas.addEventListener("mousemove",updateGameAreaMousePos,false);
+                        this.canvas.addEventListener("touchmove",updateGameAreaMousePos,false);
+                        this.canvas.addEventListener("click", fireBall, false);
+                        this.level = 0;
+                        for(i = 0; i < ROWS; i++) {
+                            cubes[i] = [];
+                            for(j = 0; j < COLUMNS; j++) {
+                                    cubes[i][j] = null;
+                            }
+                        }
+                    },
+                    clear : function() {
+                        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                }
+
+                function getMousePos(canvas, evt) {
+                    var rect = canvas.getBoundingClientRect();
+                    scaleX = canvas.width / rect.width;
+                    scaleY = canvas.height / rect.height;
+                    return {
+                        x: (evt.clientX - rect.left) * scaleX,
+                        y: (evt.clientY - rect.top) * scaleY
+                    };
+                }
+
+                function updateGameAreaMousePos(evt) {
+                    var mousePos = getMousePos(this, evt);
+                    gameArea.mouseX = Math.round(mousePos.x);
+                    gameArea.mouseY = Math.round(mousePos.y);
+                }
+
+                function fireBall(evt) {
+                    if(!ball.isMoving()) {
+                        var mousePos = getMousePos(this, evt);
+                        var newX = gameArea.mouseX - (ball.x + ball.width/2);
+                        var newY = gameArea.mouseY - (ball.y + ball.height/2);
+                        ball.speedX += ball.speed*Math.cos(Math.atan2(newY,newX));
+                        ball.speedY += ball.speed*Math.sin(Math.atan2(newY,newX));
+                    }
+                }
+
+                function component(width, height, color, x, y, type) {
+                    this.type = type;
+                    this.score = 0;
+                    this.width = width;
+                    this.height = height;
+                    this.speed = BALL_SPEED;
+                    this.speedX = 0;
+                    this.speedY = 0;    
+                    this.x = x;
+                    this.y = y;
+                    this.update = function() {
+                        ctx = gameArea.context;
+                        ctx.fillStyle = color;
+                        switch(type) {
+                            case "text":
+                                ctx.font = this.width + " " + this.height;
+                                ctx.fillText(this.text, this.x, this.y);
+                                break;
+                            case "ball":
+                                ctx.beginPath();
+                                ctx.arc(this.x + this.width/2, this.y, this.width/2, 0, 2*Math.PI)
+                                ctx.fill();
+                                ctx.strokeStyle = BALL_COUNTOUR;
+                                ctx.arc(this.x + this.width/2, this.y, this.width/2, 0, 2*Math.PI)
+                                ctx.stroke();
+                                break;
+                            default:
+                                ctx.fillRect(this.x, this.y, this.width, this.height);
+                                ctx.strokeStyle = CUBE_COUNTOUR;
+                                ctx.beginPath();
+                                ctx.rect(this.x, this.y, this.width, this.height);
+                                ctx.stroke();
+                                break;
+                        }
+                    }
+                    this.newPos = function() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        this.hitWalls();
+                    }
+                    this.hitWalls = function() {
+                        var bottom = gameArea.canvas.height - this.height;
+                        var top = 0;
+                        var left = 0;
+                        var right = gameArea.canvas.width - this.width;
+                        if (this.y < top) {
+                            this.y = top;
+                            this.speedY *= -1;
+                        }
+                        if(this.y > bottom) {
+                            this.y = bottom;
+                            this.speedY = 0;
+                            this.speedX = 0;
+                            gameArea.level++;
+                            slideCubes();
+                            addCubes();
+                        }
+                        if(this.x < left) {
+                            this.x = left;
+                            this.speedX *= -1;
+                        }
+                        if(this.x > right) {
+                            this.x = right;
+                            this.speedX *= -1;
+                        }
+                    }
+
+                    this.crashWith = function(otherobj) {
+                        var myleft = this.x;
+                        var myright = this.x + (this.width);
+                        var mytop = this.y;
+                        var mybottom = this.y + (this.height);
+                        var otherleft = otherobj.x;
+                        var otherright = otherobj.x + (otherobj.width);
+                        var othertop = otherobj.y;
+                        var otherbottom = otherobj.y + (otherobj.height);
+                        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+                                return null;
+                        } else {
+                            var hgap = Math.abs(myleft - otherleft);
+                            var vgap = Math.abs(mytop - othertop);
+                            if(hgap > vgap)
+                                return "h";
+                            else
+                                return "v";
+                        }
+                    }
+
+                    this.isMoving = function() {
+                        return this.speedY != 0 || this.speedX != 0;
+                    }
+                }
+
+                function line(color) {
+                    this.color = color;
+                    this.update = function() {
+                            if(!ball.isMoving()) {
+                                ctx = gameArea.context;
+                                ctx.beginPath();
+                                ctx.strokeStyle = this.color;
+                                ctx.moveTo(ball.x + ball.width/2, ball.y);
+                                ctx.lineTo(gameArea.mouseX, gameArea.mouseY);
+                                ctx.stroke();
+                            }
+                    }
+                }
+
+                function updateGameArea() {
+                        gameArea.clear();
+                        aimingLine.update();
+                        ball.newPos();
+                        ball.update();
+                        level.text = "LEVEL: " + gameArea.level;
+                        level.update();
+                        for(i = 0; i < ROWS; i++) {
+                            for(j = 0; j < COLUMNS; j++) {
+                                if(cubes[i][j] != null) {
+                                    cubes[i][j].update();
+                                    switch( ball.crashWith(cubes[i][j])) {
+                                        case "h":
+                                            ball.speedX *= -1;
+                                            cubes[i][j] = null;
+                                            break;
+                                        case "v":
+                                            ball.speedY *= -1;
+                                            cubes[i][j] = null;
+                                            break;
+                                        default:
+                                            break;
+                                    }								
+                                }
+                            }
+                        }
+                        if(gameOver.text != undefined) {
+                            gameOver.update();
+                        }
+                }
+
+                function addCubes() {
+                        var n = Math.floor(1 + Math.random()*(gameArea.level + 1));
+                        for(i = 0; i < n; i++) {
+                            var ren = Math.floor(Math.random()*3);
+                            var col = Math.floor(Math.random()*COLUMNS);
+                            if(cubes[ren][col] == null) {
+                                cubes[ren][col] = new component(CUBE_SIZE, CUBE_SIZE, CUBE_COLOR, 10 + col*CUBE_SIZE,30 + ren*CUBE_SIZE);
+                            }
+                        }
+                }
+
+                function slideCubes() {
+                        for(j = 0; j < COLUMNS; j++) {
+                            if(cubes[ROWS - 1][j] != null) {
+                                gameOver.text = "GAME OVER";
+                                clearInterval(gameArea.interval);
+                                return;
+                            }
+                        }
+                        for(i = ROWS - 1; i > 0; i--) {
+                            for(j = 0; j < COLUMNS; j++) {
+                                cubes[i][j] = cubes[i-1][j];
+                                if(cubes[i][j] != null) {
+                                    cubes[i][j].y += CUBE_SIZE;
+                                }
+                            }
+                        }
+                        for(j = 0; j < COLUMNS; j++) {
+                            cubes[0][j] = null;
+                        }
+                }
+
+            </script>
+        </section>
+        
+    </body>
+</html>

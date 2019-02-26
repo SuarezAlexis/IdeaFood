@@ -244,4 +244,9 @@ public class IdeaFoodController {
         }
         return "redirect:/home";
     }
+    
+    @RequestMapping(value= "/Bricks")
+    public String bricks() {
+        return "bricks";
+    }
 }
