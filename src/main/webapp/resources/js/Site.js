@@ -102,7 +102,7 @@ function sendFile(fileData) {
 
     $.ajax({
         type: 'POST',
-        url: '/IdeaFood/FotoUpload',
+        url: '/FotoUpload',
         data: formData,
         contentType: false,
         processData: false,

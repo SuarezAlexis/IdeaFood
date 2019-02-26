@@ -7,8 +7,8 @@
         <title th:replace="${title}">Layout Title</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" href="/IdeaFood/resources/css/bootstrap.css" th:href="@{/resources/css/bootstrap.css}"/>
-        <link rel="stylesheet" href="/IdeaFood/resources/css/Site.css" th:href="@{/resources/css/Site.css}"/>
+        <link rel="stylesheet" href="/resources/css/bootstrap.css" th:href="@{/resources/css/bootstrap.css}"/>
+        <link rel="stylesheet" href="/resources/css/Site.css" th:href="@{/resources/css/Site.css}"/>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -20,7 +20,7 @@
                     <ul class="nav navbar-nav navbar-right list-inline">
                         <li>
                             <div id="list-button" class="circle-btn bg-yellow">
-                                <a href="/IdeaFood/Recientes" th:href="@{Recientes}">
+                                <a href="/Recientes" th:href="@{Recientes}">
                                     <span class="glyphicon glyphicon-list" data-toggle="tooltip" title="Ver Recientes"></span>
                                 </a>
                             </div>
@@ -38,7 +38,7 @@
                         </li>
                         <li sec:authorize="isAnonymous()">
                             <div id="user-button" class="circle-btn bg-yellow">
-                                <a href="/IdeaFood/Ingresar" th:href="@{Ingresar}">
+                                <a href="/Ingresar" th:href="@{Ingresar}">
                                     <span class="glyphicon glyphicon-user" data-toggle="tooltip" title="Iniciar sesi&oacute;n"></span>
                                 </a>
                             </div>
@@ -48,7 +48,7 @@
                 <div sec:authorize="isAuthenticated()" class="collapse navbar-collapse text-right" id="userMenu">
                     <ul class="nav navbar-nav">
                         <li><a href="#">Perfil <span class="glyphicon glyphicon-user"></span> </a></li>
-                        <li><a href="/IdeaFood/Salir" th:href="@{Salir}">Cerrar sesi&oacute;n <span class="glyphicon glyphicon-log-out"></span></a></li>
+                        <li><a href="/Salir" th:href="@{Salir}">Cerrar sesi&oacute;n <span class="glyphicon glyphicon-log-out"></span></a></li>
                     </ul>
                 </div>
             </div>
@@ -64,7 +64,7 @@
         </div>
         
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="/IdeaFood/resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.js}"></script>
+        <script src="/resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.js}"></script>
         <script type="text/javascript" >
             $(document).ready(function() {
                 //Inicializar plus-button para mostrar overlay
@@ -145,7 +145,7 @@
                         if(page > 1) {
                             $.ajax({
                                 type: 'GET',
-                                url: '/IdeaFood/RequestRecientes',
+                                url: '/RequestRecientes',
                                 data: { pag: page },
                                 success: function (result) {
                                     if (result) {
@@ -199,6 +199,6 @@
                 });
             };
         </script>
-        <script src="/IdeaFood/resources/js/Site.js" th:src="@{/resources/js/Site.js}"></script>
+        <script src="/resources/js/Site.js" th:src="@{/resources/js/Site.js}"></script>
     </body>
 </html>
