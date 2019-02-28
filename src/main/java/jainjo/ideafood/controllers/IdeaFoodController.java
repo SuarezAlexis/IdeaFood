@@ -1,13 +1,23 @@
 package jainjo.ideafood.controllers;
 
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 import jainjo.ideafood.dto.*;
 import jainjo.ideafood.model.*;
 import jainjo.ideafood.services.IdeaService;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.Channels;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
@@ -64,7 +74,14 @@ public class IdeaFoodController {
     
     private final int RECENTS_PAGE_SIZE = 2;
     private final String APP_PATH = "\\IdeaFood\\src\\main\\webapp";
-    private final String FOOD_IMG_RELATIVE_PATH = "\\resources\\img\\food\\";
+    private final String FOOD_IMG_RELATIVE_PATH = "\\resources\\img\\";
+    private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
+        //.initialRetryDelayMillis(10)
+        //.retryMaxAttempts(5)
+        //.totalRetryPeriodMillis(15000)
+        .build());
+    private final String GOOGLE_STORAGE_BUCKET_NAME = "digitalmenudev-180918.appspot.com";
+    private static final int BUFFER_SIZE = 2 * 1024 * 1024;
     
     /************************** Model Attributes **************************/
     @ModelAttribute("tiposAlimento")
@@ -135,24 +152,39 @@ public class IdeaFoodController {
         if(imageData.length() > 0)
         {
             Calendar calendar = Calendar.getInstance();
-            String basePath;
-            if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-                basePath = "C:\\Users\\alexis.suarez\\Documents\\NetBeansProjects";
-            } else {
-                basePath = "\\home\\alexis_suarez_fi";
-            }
-            basePath += APP_PATH;
+            String relativePath = "food\\" + calendar.get(Calendar.YEAR) + "\\" + (calendar.get(Calendar.MONTH) + 1) + "\\" + calendar.get(Calendar.DAY_OF_MONTH);;
             String extension = imageData.substring(11,imageData.indexOf(";"));
-            String relativePath = FOOD_IMG_RELATIVE_PATH + calendar.get(Calendar.YEAR) + "\\" + (calendar.get(Calendar.MONTH) + 1) + "\\" + calendar.get(Calendar.DAY_OF_MONTH);
             String fileName = UUID.randomUUID() + "." + extension;
-            File file = new File(basePath + relativePath);
-            if(!file.exists())
-                file.mkdirs();
-            file = new File(basePath + relativePath + "\\" + fileName);
-            file.createNewFile();
             imageData = imageData.replace("data:image/"+ extension + ";base64,","");
-            try (FileOutputStream fos = new FileOutputStream(file,false)) {
-                fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
+            
+            if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+                GcsFileOptions instance = GcsFileOptions.getDefaultInstance();
+                GcsFilename objectName = new GcsFilename(GOOGLE_STORAGE_BUCKET_NAME, /*relativePath.replaceAll("\\\\","/") + "/" +*/ fileName);
+                try {
+                    GcsOutputChannel outputChannel = gcsService.createOrReplace(objectName, instance);
+                             
+                    try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(imageData.getBytes("UTF-8")) ) {
+                        byte[] buffer = new byte[BUFFER_SIZE];
+                        int bytesRead = in.read(buffer);
+                        while (bytesRead != -1) {
+                            out.write(buffer, 0, bytesRead);
+                            bytesRead = in.read(buffer);
+                        }
+                    } 
+                } catch(Exception e) {
+                    return ResponseEntity.ok("{ \"success\": false; \"message\": \"Problema con repositorio de imágenes.\" }");
+                }  
+            } else {
+                String basePath = "C:\\Users\\alexis.suarez\\Documents\\NetBeansProjects" + APP_PATH;
+                relativePath = FOOD_IMG_RELATIVE_PATH + relativePath;
+                File file = new File(basePath + relativePath);
+                if(!file.exists())
+                    file.mkdirs();
+                file = new File(basePath + relativePath + "\\" + fileName);
+                file.createNewFile();
+                try (FileOutputStream fos = new FileOutputStream(file,false)) {
+                    fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
+                }
             }
             return ResponseEntity.ok("{ \"success\": true, \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
         }
