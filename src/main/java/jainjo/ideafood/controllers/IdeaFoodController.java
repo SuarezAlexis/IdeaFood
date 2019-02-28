@@ -158,13 +158,13 @@ public class IdeaFoodController {
             imageData = imageData.replace("data:image/"+ extension + ";base64,","");
             
             if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-                relativePath = "/" + relativePath.replaceAll("\\\\","/");
+                relativePath = relativePath.replaceAll("\\\\","/");
                 GcsFileOptions instance = GcsFileOptions.getDefaultInstance();
                 GcsFilename objectName = new GcsFilename(GOOGLE_STORAGE_BUCKET_NAME, relativePath + "/" + fileName);
                 try {
                     GcsOutputChannel outputChannel = gcsService.createOrReplace(objectName, instance);
                              
-                    try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(imageData.getBytes("UTF-8")) ) {
+                    try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(imageData.getBytes()) ) {
                         byte[] buffer = new byte[BUFFER_SIZE];
                         int bytesRead = in.read(buffer);
                         while (bytesRead != -1) {
