@@ -137,7 +137,10 @@ public class IdeaFoodController {
         if(picRelativePath.isPresent()){
             Foto foto = new Foto();
             foto.setUsuario(idea.getUsuario());
-            foto.setUrl(picRelativePath.get().substring(20));
+            if(SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) 
+                foto.setUrl(picRelativePath.get().substring(20));
+            else
+                foto.setUrl(picRelativePath.get());
             foto.setIdea(idea);
             idea.getFotos().add(foto);
         }
@@ -163,7 +166,6 @@ public class IdeaFoodController {
                 GcsFilename objectName = new GcsFilename(GOOGLE_STORAGE_BUCKET_NAME, relativePath + "/" + fileName);
                 try {
                     GcsOutputChannel outputChannel = gcsService.createOrReplace(objectName, instance);
-                             
                     try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(Base64.getDecoder().decode( imageData.getBytes("UTF-8") ))  ) {
                         byte[] buffer = new byte[BUFFER_SIZE];
                         int bytesRead = in.read(buffer);
