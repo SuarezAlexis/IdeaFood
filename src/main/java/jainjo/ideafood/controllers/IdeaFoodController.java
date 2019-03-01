@@ -184,7 +184,7 @@ public class IdeaFoodController {
                 file = new File(basePath + relativePath + "\\" + fileName);
                 file.createNewFile();
                 try (FileOutputStream fos = new FileOutputStream(file,false)) {
-                    fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
+                    fos.write(Base64.getDecoder().decode(imageData.getBytes()));
                 }
             }
             return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
