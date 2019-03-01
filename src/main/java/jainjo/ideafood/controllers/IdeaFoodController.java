@@ -187,7 +187,7 @@ public class IdeaFoodController {
                     fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
                 }
             }
-            return ResponseEntity.ok("{ \"success\": true, \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
+            return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
         }
         else
         {

@@ -109,8 +109,9 @@ function sendFile(fileData) {
         success: function (result) {
 			var data = jQuery.parseJSON(result);
             if (data.success) {
-                $('#img-upload-btn').html('<img src="/IdeaFood' + data.fileRelativePath + '" class="img-responsive" /><input type="hidden" id="picName" name="picName" value="' + data.fileRelativePath + '"/>');
-                alert('Successful file upload');
+                if(data.success === true)
+                    $('#img-upload-btn').html('<img src="/IdeaFood' + data.fileRelativePath + '" class="img-responsive" /><input type="hidden" id="picName" name="picName" value="' + data.fileRelativePath + '"/>');
+                alert(data.message);
             } else {
                 alert('There was an error uploading your file!');
             }
