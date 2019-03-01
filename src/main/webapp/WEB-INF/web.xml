@@ -10,8 +10,8 @@
         
         <multipart-config>
             <location>/tmp</location>
-            <max-file-size>1048576</max-file-size>
-            <max-request-size>2097152</max-request-size>
+            <max-file-size>15728640</max-file-size>
+            <max-request-size>16777216</max-request-size>
             <file-size-threshold>524288</file-size-threshold>
         </multipart-config>
     </servlet>
