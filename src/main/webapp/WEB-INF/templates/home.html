@@ -17,7 +17,7 @@
             <div id="sugerencias" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div th:each="idea : ${sugerencias}" class="item" th:class="${ideaStat.first}? 'item active' : 'item'">
-                        <img src="/resources/img/image-icon.png" th:src="@{/resources/img/food/} + *{idea.fotos[0].url}" class="img-responsive" style="width: 100%;"/>
+                        <img src="/resources/img/image-icon.png" th:src="'https://storage.googleapis.com/digitalmenudev-180918.appspot.com/food/' + *{idea.fotos[0].url}" class="img-responsive" style="width: 100%;"/>
                         <div class="carousel-caption">
                             <ul class="col-xs-offset-6 text-right list-unstyled">
                                 <li>

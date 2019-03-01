@@ -172,6 +172,7 @@ public class IdeaFoodController {
                             bytesRead = in.read(buffer);
                         }
                     } 
+                    return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"filePath\": \"" + relativePath.substring(5) + "/" + fileName + "\" }");
                 } catch(Exception e) {
                     return ResponseEntity.ok("{ \"success\": false, \"message\": \"Problema con repositorio de imágenes.\" }");
                 }  
@@ -186,8 +187,8 @@ public class IdeaFoodController {
                 try (FileOutputStream fos = new FileOutputStream(file,false)) {
                     fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
                 }
+                return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
             }
-            return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
         }
         else
         {
