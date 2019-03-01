@@ -173,7 +173,7 @@ public class IdeaFoodController {
                         }
                     } 
                 } catch(Exception e) {
-                    return ResponseEntity.ok("{ \"success\": false; \"message\": \"Problema con repositorio de imágenes.\" }");
+                    return ResponseEntity.ok("{ \"success\": false, \"message\": \"Problema con repositorio de imágenes.\" }");
                 }  
             } else {
                 String basePath = "C:\\Users\\alexis.suarez\\Documents\\NetBeansProjects" + APP_PATH;
@@ -187,11 +187,11 @@ public class IdeaFoodController {
                     fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
                 }
             }
-            return ResponseEntity.ok("{ \"success\": true, \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
+            return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
         }
         else
         {
-            return ResponseEntity.ok("{ \"success\": false; \"message\": \"Archivo vacio.\" }");
+            return ResponseEntity.ok("{ \"success\": false, \"message\": \"Archivo vacio.\" }");
         }
     }
     
