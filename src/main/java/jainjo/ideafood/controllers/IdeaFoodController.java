@@ -164,7 +164,7 @@ public class IdeaFoodController {
                 try {
                     GcsOutputChannel outputChannel = gcsService.createOrReplace(objectName, instance);
                              
-                    try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(imageData.getBytes()) ) {
+                    try (   OutputStream out = Channels.newOutputStream(outputChannel); InputStream in = new ByteArrayInputStream(Base64.getDecoder().decode( imageData.getBytes("UTF-8") ))  ) {
                         byte[] buffer = new byte[BUFFER_SIZE];
                         int bytesRead = in.read(buffer);
                         while (bytesRead != -1) {
@@ -184,7 +184,7 @@ public class IdeaFoodController {
                 file = new File(basePath + relativePath + "\\" + fileName);
                 file.createNewFile();
                 try (FileOutputStream fos = new FileOutputStream(file,false)) {
-                    fos.write(Base64.getDecoder().decode(imageData.getBytes()));
+                    fos.write(Base64.getDecoder().decode(imageData.getBytes("UTF-8")));
                 }
             }
             return ResponseEntity.ok("{ \"success\": true, \"message\" : \"El archivo se subió correctamente.\", \"fileRelativePath\": \"" + relativePath.replace("\\","/") + "/" + fileName + "\" }");
