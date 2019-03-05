@@ -75,4 +75,19 @@ public class IdeaService {
         }
         return usuario;
     }
+    
+    public void updateScore(String userName, int score) {
+        Usuario usuario = new Usuario();
+        usuario.setUserName(userName);
+        usuario.setScore(score);
+        try {
+            usuarioDao.update(usuario);
+        } catch(Exception e) {
+            
+        }
+    }
+    
+    public int getScore(String userName) {
+        return usuarioDao.find(userName).getScore();
+    }
 }

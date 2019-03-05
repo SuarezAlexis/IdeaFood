@@ -8,6 +8,15 @@ public class Usuario {
     private String password;
     private String email;
     private List<String> permisos;
+    private int score;
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public List<String> getPermisos() {
         return permisos;

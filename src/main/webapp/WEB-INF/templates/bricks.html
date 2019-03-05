@@ -5,11 +5,23 @@
     </head>
     <body>
         <section>
-            <button class="btn btn-success btn-block" onclick="startGame()">Start Game!</button>
+            <form>
+                <input type="hidden" id="score" name="score" />
+                <input type="submit" name="submit" id="submit" value="Guardar record" class="btn btn-warning btn-block" style="display: none; margin-bottom: 6px;"/>
+                <div id="login-message" class="alert alert-warning text-center" style="display: none;">
+                    Inicia sesi&oacute;n para guardar tu record.
+                </div>
+                <input type="hidden" id="hi-score" name="hi-score" th:value="${hiScore}" />
+            </form>
+            <button id="startGame" name="startGame" class="btn btn-success btn-block" onclick="startGame()">Iniciar juego</button>
+            
+            
+            
             <script type="text/javascript">                   
                 var ball;
                 var aimingLine;
                 var level;
+                var hiScore;
                 var gameOver;
                 var cubes = [];
                 var SCREEN_HEIGHT = 568;
@@ -27,8 +39,10 @@
 
 
                 function startGame() {
+                    document.getElementById("startGame").innerHTML = "Reiniciar juego";
                     ball = new component( CUBE_SIZE, CUBE_SIZE, BALL_COLOR,(SCREEN_WIDTH/2) - CUBE_SIZE/2, SCREEN_HEIGHT - CUBE_SIZE/2, "ball");
                     level = new component("15px","Consolas","black",15,20,"text");
+                    hiScore = new component("15px","Consolas","black",SCREEN_WIDTH - 120,20,"text");
                     gameOver = new component("30px","Consolas","black",85,SCREEN_HEIGHT/2,"text");
                     gameArea.start();
                     aimingLine = new line(LINE_COLOR);
@@ -139,6 +153,7 @@
                             this.speedY = 0;
                             this.speedX = 0;
                             gameArea.level++;
+                            document.getElementById("score").value = gameArea.level;
                             slideCubes();
                             addCubes();
                         }
@@ -199,6 +214,8 @@
                         ball.update();
                         level.text = "LEVEL: " + gameArea.level;
                         level.update();
+                        hiScore.text = "HI-SCORE: " + (document.getElementById("hi-score").value != ""? document.getElementById("hi-score").value : 0);
+                        hiScore.update();
                         for(i = 0; i < ROWS; i++) {
                             for(j = 0; j < COLUMNS; j++) {
                                 if(cubes[i][j] != null) {
@@ -220,6 +237,11 @@
                         }
                         if(gameOver.text != undefined) {
                             gameOver.update();
+                            if( $('#user-button span.glyphicon-user').attr('title').indexOf("Iniciar sesi") == 0 ) {
+                                document.getElementById("login-message").style.display = "";
+                            } else {
+                                document.getElementById("submit").style.display = "";
+                            }
                         }
                 }
 

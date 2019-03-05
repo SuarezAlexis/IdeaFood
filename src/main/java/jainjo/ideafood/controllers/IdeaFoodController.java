@@ -98,7 +98,7 @@ public class IdeaFoodController {
     public Idea nuevaIdea() {
         Idea idea = new Idea();
         Usuario usuario = new Usuario();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = authorize();
         if(auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             usuario.setUserName(((User)auth.getPrincipal()).getUsername());
             idea.setUsuario(usuario);
@@ -273,7 +273,7 @@ public class IdeaFoodController {
     
     @RequestMapping(value = "/Salir")
     public String logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = authorize();
         if (auth != null) {
             cookieClearingLogoutHandler.logout(request, response, auth);
             request.logout();
@@ -282,7 +282,14 @@ public class IdeaFoodController {
     }
     
     @RequestMapping(value= "/Bricks")
-    public String bricks() {
+    public String bricks(@RequestParam(value="score") Optional<Integer> score, Model model) {
+        if(authorize().getName() != "anonymousUser") {
+            if(score.isPresent()) {
+                ideaService.updateScore(authorize().getName(), score.get());
+                return "redirect:Bricks";
+            }
+            model.addAttribute("hiScore", ideaService.getScore(authorize().getName()) );
+        }
         return "bricks";
     }
 }

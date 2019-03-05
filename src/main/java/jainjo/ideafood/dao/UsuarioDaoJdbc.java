@@ -29,6 +29,7 @@ public class UsuarioDaoJdbc implements UsuarioDao {
             u.setEmail(rs.getString("Email"));
             u.setPassword(rs.getString("Password"));
             u.setPermisos(new ArrayList<String>());
+            u.setScore(rs.getInt("BricksScore"));
             return u;
         }
     };
@@ -73,8 +74,39 @@ public class UsuarioDaoJdbc implements UsuarioDao {
     }
 
     @Override
-    public void update(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void update(final Usuario usuario) {
+        PreparedStatementCreator psc = new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                int paramCount = 1;
+                String updateUsuarioSql = "UPDATE Usuario SET ";
+                if(usuario.getNombre() != null) 
+                    updateUsuarioSql += "Nombre = ? ,";
+                if(usuario.getEmail() != null)
+                    updateUsuarioSql += "Email = ? ,";
+                if(usuario.getScore() > 0)
+                    updateUsuarioSql += "BricksScore = ? ,";
+                updateUsuarioSql = updateUsuarioSql.substring(0,updateUsuarioSql.length()-1);
+                updateUsuarioSql += "WHERE UserName = ?";
+                
+                PreparedStatement ps = conn.prepareStatement(updateUsuarioSql);
+                if(usuario.getNombre() != null) {
+                    ps.setString(paramCount, usuario.getNombre());
+                    paramCount++;
+                }
+                if(usuario.getEmail() != null) {
+                    ps.setString(paramCount,usuario.getEmail());
+                    paramCount++;
+                }
+                if(usuario.getScore() > 0) {
+                    ps.setInt(paramCount, usuario.getScore());
+                    paramCount++;
+                }
+                ps.setString(paramCount, usuario.getUserName());
+                return ps;
+            }
+        };
+        jdbcTemplate.update(psc);
     }
 
     @Override
