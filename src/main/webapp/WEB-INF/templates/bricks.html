@@ -9,7 +9,7 @@
                 <input type="hidden" id="score" name="score" />
                 <input type="submit" name="submit" id="submit" value="Guardar record" class="btn btn-warning btn-block" style="display: none; margin-bottom: 6px;"/>
                 <div id="login-message" class="alert alert-warning text-center" style="display: none;">
-                    Inicia sesi&oacute;n para guardar tu record.
+                    <a href="/Ingresar" th:href="@{Ingresar}"> Inicia sesi&oacute;n </a> para guardar tu record.
                 </div>
                 <input type="hidden" id="hi-score" name="hi-score" th:value="${hiScore}" />
             </form>
