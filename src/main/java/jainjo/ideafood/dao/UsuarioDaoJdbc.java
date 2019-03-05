@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -19,6 +20,7 @@ public class UsuarioDaoJdbc implements UsuarioDao {
     private final String INSERT_PERMISOS_SQL = "INSERT INTO Usuario_Permiso(UserName, Nombre) VALUES (?,?)";
     private final String SELECT_USUARIO_SQL = "SELECT * FROM Usuario WHERE UserName = ? OR Email = ?";
     private final String SELECT_USUARIO_PERMISO_SQL = "SELECT Nombre FROM Usuario_Permiso WHERE UserName = ?";
+    private final String SELECT_HIGH_SCORES_SQL = "SELECT * FROM Usuario ORDER BY BricksScore DESC LIMIT ?";
     
     private final static RowMapper rowMapper = new RowMapper<Usuario>() {
         @Override
@@ -116,6 +118,11 @@ public class UsuarioDaoJdbc implements UsuarioDao {
             usuario.getPermisos().add(p);
         }
         return usuario;
+    }
+    
+    @Override
+    public List<Usuario> findHighScores(int top) {
+        return jdbcTemplate.query(SELECT_HIGH_SCORES_SQL, rowMapper, new Object[] { top });
     }
     
 }

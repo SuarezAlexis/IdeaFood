@@ -90,4 +90,8 @@ public class IdeaService {
     public int getScore(String userName) {
         return usuarioDao.find(userName).getScore();
     }
+    
+    public List<Usuario> getHighScores() {
+        return usuarioDao.findHighScores(3);
+    }
 }

@@ -290,6 +290,7 @@ public class IdeaFoodController {
             }
             model.addAttribute("hiScore", ideaService.getScore(authorize().getName()) );
         }
+        model.addAttribute("highScores",ideaService.getHighScores());
         return "bricks";
     }
 }

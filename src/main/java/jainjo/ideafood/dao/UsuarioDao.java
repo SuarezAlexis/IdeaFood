@@ -1,5 +1,7 @@
 package jainjo.ideafood.dao;
 
+import java.util.List;
+
 import jainjo.ideafood.model.Usuario;
 
 public interface UsuarioDao {
@@ -7,4 +9,5 @@ public interface UsuarioDao {
     public void delete(String userName);
     public void update(Usuario usuario);
     public Usuario find(String userNameOrEmail);
+    public List<Usuario> findHighScores(int top);
 }

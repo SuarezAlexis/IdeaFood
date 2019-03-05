@@ -15,7 +15,19 @@
             </form>
             <button id="startGame" name="startGame" class="btn btn-success btn-block" onclick="startGame()">Iniciar juego</button>
             
-            
+            <table class="table" th:if="${not #lists.isEmpty(highScores)}" >
+                <thead>
+                    <tr>
+                        <th class="text-center" colspan="2" >Puntuaciones altas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${highScores}" >
+                        <td th:text="${u.userName}" class="text-center">Username</td>
+                        <td th:text="${u.score}" class="text-center">score</td>
+                    </tr>
+                </tbody>
+            </table>
             
             <script type="text/javascript">                   
                 var ball;
