@@ -11,6 +11,9 @@
                 <div id="login-message" class="alert alert-warning text-center" style="display: none;">
                     <a href="/Ingresar" th:href="@{Ingresar}"> Inicia sesi&oacute;n </a> para guardar tu record.
                 </div>
+                <div id="betterLuck-message" class="alert alert-warning text-center" style="display: none;">
+                    &iexcl;Intenta de nuevo!
+                </div>
                 <input type="hidden" id="hi-score" name="hi-score" th:value="${hiScore}" />
             </form>
             <button id="startGame" name="startGame" class="btn btn-success btn-block" onclick="startGame()">Iniciar juego</button>
@@ -252,7 +255,10 @@
                             if( $('#user-button span.glyphicon-user').attr('title').indexOf("Iniciar sesi") == 0 ) {
                                 document.getElementById("login-message").style.display = "";
                             } else {
-                                document.getElementById("submit").style.display = "";
+                                if(gameArea.level > document.getElementById("hi-score").value)
+                                    document.getElementById("submit").style.display = "";
+                                else
+                                    document.getElementById("betterLuck-message").style.display = "";
                             }
                         }
                 }
