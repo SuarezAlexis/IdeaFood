@@ -54,7 +54,7 @@
                 </div>
                 <div sec:authorize="isAuthenticated()" class="collapse navbar-collapse text-right" id="userMenu">
                     <ul class="nav navbar-nav">
-                        <li><a href="#">Perfil <span class="glyphicon glyphicon-user"></span> </a></li>
+                        <li><a href="/Perfil" th:href="@{Perfil}">Perfil <span class="glyphicon glyphicon-user"></span> </a></li>
                         <li><a href="/Salir" th:href="@{Salir}">Cerrar sesi&oacute;n <span class="glyphicon glyphicon-log-out"></span></a></li>
                     </ul>
                 </div>

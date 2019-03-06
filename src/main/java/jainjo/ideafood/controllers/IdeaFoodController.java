@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -281,7 +282,7 @@ public class IdeaFoodController {
         return "redirect:/home";
     }
     
-    @RequestMapping(value= "/Bricks")
+    @RequestMapping("/Bricks")
     public String bricks(@RequestParam(value="score") Optional<Integer> score, Model model) {
         if(authorize().getName() != "anonymousUser") {
             if(score.isPresent()) {
@@ -292,5 +293,12 @@ public class IdeaFoodController {
         }
         model.addAttribute("highScores",ideaService.getHighScores());
         return "bricks";
+    }
+    
+    @RequestMapping("/Perfil")
+    @Secured("usuario")
+    public String profile(Model model) {
+        model.addAttribute("usuario", new RegistroDto(ideaService.getUsuario(authorize().getName())));
+        return "perfil";
     }
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Perfil</title>
+    </head>
+    <body>
+        <section>
+            <div>
+                <label>Username</label>
+                <h4 th:text="${usuario.userName}">
+                    UserName
+                </h4>
+            </div>
+            <form action="Perfil" th:action="@{/Perfil}" th:object="${usuario}" th:method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <div>
+                        <label for="usuario.nombre">Nombre</label>
+                    </div>
+                    <div>
+                        <input type="text" id="nombre" name="nombre" th:field="*{nombre}" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="usuario.email">Correo electr&oacute;nico</label>
+                    </div>
+                    <div>
+                        <input type="text" id="email" name="email" th:field="*{email}" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="password">Contrase&ntilde;a</label>
+                    </div>
+                    <div>
+                        <input type="password" th:field="*{password}" id="password" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="confirmaPassword">Confirma contrase&ntilde;a</label>
+                    </div>
+                    <div>
+                        <input type="password" th:field="*{confirmaPassword}" id="confirmaPassword" name="confirmaPassword" class="form-control"/>
+                    </div>
+                </div>
+                <input type="submit" id="submit" name="submit" class="btn btn-warning btn-block" value="Guardar cambios"/>
+            </form>
+        </section>
+    </body>
+</html>

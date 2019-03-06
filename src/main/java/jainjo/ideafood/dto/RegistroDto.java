@@ -1,5 +1,6 @@
 package jainjo.ideafood.dto;
 
+import jainjo.ideafood.model.Usuario;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import jainjo.ideafood.services.ValidEmail;
@@ -27,6 +28,16 @@ public class RegistroDto {
     @NotNull
     @NotEmpty
     private String confirmaPassword;
+    
+    public RegistroDto() {
+        
+    }
+    
+    public RegistroDto(Usuario u) {
+        this.userName = u.getUserName();
+        this.email = u.getEmail();
+        this.nombre = u.getNombre();
+    }
 
     public String getNombre() {
         return nombre;
