@@ -98,4 +98,22 @@ public class IdeaService {
     public Usuario getUsuario(String userName) {
         return usuarioDao.find(userName);
     }
+
+    public Usuario updateUsuario(RegistroDto registro) {
+        Usuario usuario = new Usuario();
+        if(registro.getNombre() != null && !registro.getNombre().isEmpty())
+            usuario.setNombre(registro.getNombre());
+        if(registro.getEmail() != null && !registro.getEmail().isEmpty())
+            usuario.setEmail(registro.getEmail());
+        if(registro.getPassword() != null && !registro.getPassword().isEmpty())
+            usuario.setPassword(passwordEncoder.encode(registro.getPassword()));
+        usuario.setUserName(registro.getUserName());
+        usuario.setFoto(registro.getFoto());
+        try {
+            usuarioDao.update(usuario);
+        } catch(Exception e) {
+            return null;
+        }
+        return usuario;
+    }
 }

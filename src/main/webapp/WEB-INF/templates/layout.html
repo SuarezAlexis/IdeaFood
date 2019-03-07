@@ -32,7 +32,7 @@
                                 </a>
                             </div>
                         </li>
-                        <li sec:authorize="isAuthenticated()">
+                        <li th:if="${#httpServletRequest.requestURI != '/Perfil'}" sec:authorize="isAuthenticated()">
                             <div id="plus-button" class="circle-btn bg-yellow">
                                 <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Agregar Idea"></span>
                             </div>
@@ -65,7 +65,7 @@
                 <p>Layout content</p>
             </div>
             
-            <div sec:authorize="isAuthenticated()" th:replace="~{nuevo::nuevo}"  >
+            <div sec:authorize="isAuthenticated()" th:replace="~{nuevo::nuevo}" >
                 <p>Overlay</p>
             </div>
         </div>

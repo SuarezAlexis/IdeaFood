@@ -29,6 +29,8 @@ public class RegistroDto {
     @NotEmpty
     private String confirmaPassword;
     
+    private String foto;
+    
     public RegistroDto() {
         
     }
@@ -37,6 +39,15 @@ public class RegistroDto {
         this.userName = u.getUserName();
         this.email = u.getEmail();
         this.nombre = u.getNombre();
+        this.foto = u.getFoto();
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     public String getNombre() {

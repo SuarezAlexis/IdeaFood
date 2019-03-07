@@ -32,6 +32,7 @@ public class UsuarioDaoJdbc implements UsuarioDao {
             u.setPassword(rs.getString("Password"));
             u.setPermisos(new ArrayList<String>());
             u.setScore(rs.getInt("BricksScore"));
+            u.setFoto(rs.getString("Foto"));
             return u;
         }
     };
@@ -86,6 +87,10 @@ public class UsuarioDaoJdbc implements UsuarioDao {
                     updateUsuarioSql += "Nombre = ? ,";
                 if(usuario.getEmail() != null)
                     updateUsuarioSql += "Email = ? ,";
+                if(usuario.getPassword() != null)
+                    updateUsuarioSql += "Password = ? ,";
+                if(usuario.getFoto() != null)
+                    updateUsuarioSql += "Foto = ? ,";
                 if(usuario.getScore() > 0)
                     updateUsuarioSql += "BricksScore = ? ,";
                 updateUsuarioSql = updateUsuarioSql.substring(0,updateUsuarioSql.length()-1);
@@ -100,6 +105,14 @@ public class UsuarioDaoJdbc implements UsuarioDao {
                     ps.setString(paramCount,usuario.getEmail());
                     paramCount++;
                 }
+                if(usuario.getPassword() != null) {
+                    ps.setString(paramCount, usuario.getPassword());
+                    paramCount++;
+                }
+                if(usuario.getFoto() != null) {
+                    ps.setString(paramCount, usuario.getFoto());
+                    paramCount++;
+                }
                 if(usuario.getScore() > 0) {
                     ps.setInt(paramCount, usuario.getScore());
                     paramCount++;
@@ -108,7 +121,7 @@ public class UsuarioDaoJdbc implements UsuarioDao {
                 return ps;
             }
         };
-        jdbcTemplate.update(psc);
+        jdbcTemplate.update(psc);   
     }
 
     @Override

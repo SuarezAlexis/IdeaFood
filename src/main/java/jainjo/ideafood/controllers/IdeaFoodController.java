@@ -9,6 +9,7 @@ import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 import jainjo.ideafood.dto.*;
 import jainjo.ideafood.model.*;
+import jainjo.ideafood.services.EmailValidator;
 import jainjo.ideafood.services.IdeaService;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -152,7 +153,7 @@ public class IdeaFoodController {
     }
     
     @PostMapping("FotoUpload")
-    public ResponseEntity<String> guardaFoto(String imageData) throws FileNotFoundException, IOException {
+    public ResponseEntity<String> guardaFoto(String imageData, HttpServletRequest request) throws FileNotFoundException, IOException {
         if(imageData.length() > 0)
         {
             Calendar calendar = Calendar.getInstance();
@@ -215,6 +216,13 @@ public class IdeaFoodController {
         return "lastest";
     }
     
+    @RequestMapping(value = "/Ingresar", method = RequestMethod.GET)
+    public String login(Model model) {
+        IngresoDto ingresoDto = new IngresoDto();
+        model.addAttribute("usuario",ingresoDto);
+        return "logIn";
+    }
+    
     @RequestMapping(value = "/Ingresar", method = RequestMethod.POST)
     public ModelAndView login(@ModelAttribute("usuario") IngresoDto ingresoDto, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         if(!result.hasErrors()) {
@@ -241,15 +249,8 @@ public class IdeaFoodController {
         return mv;
     }
     
-    @RequestMapping(value = "/Ingresar", method = RequestMethod.GET)
-    public String login(Model model) {
-        IngresoDto ingresoDto = new IngresoDto();
-        model.addAttribute("usuario",ingresoDto);
-        return "logIn";
-    }
-    
     @RequestMapping(value = "/Registrar", method = RequestMethod.GET)
-    public String pantallaRegistro(Model model) {
+    public String registrar(Model model) {
         RegistroDto registroDto = new RegistroDto();
         model.addAttribute("usuario", registroDto);
         return "registrar";
@@ -257,17 +258,13 @@ public class IdeaFoodController {
     
     @RequestMapping(value = "/Registrar", method = RequestMethod.POST)
     public ModelAndView registrar(@ModelAttribute("usuario") @Valid RegistroDto registroDto, BindingResult result, WebRequest request, Errors errors) {
-        Usuario usuario = new Usuario();
-        if(!result.hasErrors()) {
-            usuario = ideaService.insertUsuario(registroDto);
-        }
-        if(usuario == null) {
-            result.rejectValue("", "El nombre de usuario o correo electrónico ya se encuentran registrados.");
-        }
         if(result.hasErrors()) {
             return new ModelAndView("registrar","usuario",registroDto);
-        }
-        else {
+        } else {
+            Usuario usuario = ideaService.insertUsuario(registroDto);
+            if(usuario == null) {
+                result.rejectValue("", "El nombre de usuario o correo electrónico ya se encuentran registrados.");
+            }
             return new ModelAndView("home");
         }
     }
@@ -295,10 +292,34 @@ public class IdeaFoodController {
         return "bricks";
     }
     
-    @RequestMapping("/Perfil")
     @Secured("usuario")
+    @RequestMapping(value = "/Perfil", method = RequestMethod.GET)
     public String profile(Model model) {
+        if( authorize().getName().equals("anonymousUser"))
+            return "redirect:Ingresar";
+        
         model.addAttribute("usuario", new RegistroDto(ideaService.getUsuario(authorize().getName())));
         return "perfil";
+    }
+    
+    @Secured("usuario")
+    @RequestMapping(value = "/Perfil", method = RequestMethod.POST)
+    public ModelAndView profile(@RequestParam("picName") Optional<String> picRelativePath, @ModelAttribute("usuario") RegistroDto registroDto, BindingResult result, Errors errors) {
+        if(! new EmailValidator().isValid(registroDto.getEmail(),null) && registroDto.getPassword().equals(registroDto.getConfirmaPassword())) {
+            return new ModelAndView("perfil","usuario",registroDto);
+        } else {
+            if(picRelativePath.isPresent()){
+                if(SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) 
+                    registroDto.setFoto(picRelativePath.get().substring(20));
+                else
+                    registroDto.setFoto(picRelativePath.get());
+            }
+            Usuario u = ideaService.updateUsuario(registroDto);
+            if(u == null) {
+                result.rejectValue("", "Ocurrió un error durante la actualización de datos.");
+            }
+        }
+        
+        return new ModelAndView("redirect:Perfil");
     }
 }

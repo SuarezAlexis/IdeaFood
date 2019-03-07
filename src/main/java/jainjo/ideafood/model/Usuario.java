@@ -7,6 +7,15 @@ public class Usuario {
     private String nombre;
     private String password;
     private String email;
+    private String foto;
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
     private List<String> permisos;
     private int score;
 

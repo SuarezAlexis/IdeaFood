@@ -8,7 +8,7 @@
     <body>
         <div id="overlay" class="container" th:fragment="nuevo">
             <h3 class="text-center">Agergar Idea</h3>
-            <form action="Nueva" th:action="@{/Nueva}" th:object="${idea}" th:method="post" enctype="multipart/form-data">
+            <form action="Nueva" th:action="@{/Nueva}" th:object="${idea}" th:method="post" enctype="multipart/form-data" th:if="${#httpServletRequest.requestURI != '/Perfil'}">
                 <div class="form-group">
                     <div>
                         <label for="alimento.nombre" class="small">Alimento</label>

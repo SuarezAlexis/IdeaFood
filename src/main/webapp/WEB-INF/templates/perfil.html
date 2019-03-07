@@ -11,7 +11,22 @@
                     UserName
                 </h4>
             </div>
+            
             <form action="Perfil" th:action="@{/Perfil}" th:object="${usuario}" th:method="post" enctype="multipart/form-data">
+                <input type="hidden" id="userName" name="userName" th:field="*{userName}" />
+                <div>
+                    <div id="img-upload-btn" class="thumbnail text-over btn btn-default new-pic-upl">
+                        <img th:if="*{foto == null}" src="/resources/img/image-icon.png" th:src="@{/resources/img/image-icon.png}" class="img-responsive"/>
+                        <img th:if="*{foto != null}" src="/resources/img/image-icon.png" th:src="'https://storage.googleapis.com/digitalmenudev-180918.appspot.com/food/' + *{foto}" class="img-responsive"/>
+                        <div id="loading" class="caption over" style="display: none;">
+                            <img src="/resources/img/loading.gif" th:src="@{/resources/img/loading.gif}" class="center"/>
+                        </div>
+                        <div class="caption over">
+                            Agregar foto
+                        </div>
+                    </div>
+                    <input id="file" name="file" type="file" accept="image/*" style="display: none;"/>
+                </div>
                 <div class="form-group">
                     <div>
                         <label for="usuario.nombre">Nombre</label>
