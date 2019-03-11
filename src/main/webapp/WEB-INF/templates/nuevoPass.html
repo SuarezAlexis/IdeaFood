@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Recuperar contrase&ntilde;a</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <section>
+            <div>
+                <h2>Restablecer contrase&ntilde;a</h2>
+            </div>
+            <div>
+                <form th:method="post" th:action="Restablecer" th:object="${usuario}"> 
+                    <div>
+                        <h3 th:text="*{userName}"></h3>
+                        <input type="hidden" id="userName" name="userName" th:field="*{userName}" />
+                    </div>
+                    <fieldset>
+                        <div class="form-group">
+                            <div>
+                                <label for="password">Contrase&ntilde;a</label>
+                            </div>
+                            <div>
+                                <input type="password" th:field="*{password}" id="password" name="password" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <label for="confirmaPassword">Confirma contrase&ntilde;a</label>
+                            </div>
+                            <div>
+                                <input type="password" th:field="*{confirmaPassword}" id="confirmaPassword" name="confirmaPassword" class="form-control"/>
+                            </div>
+                        </div>
+                        <input type="hidden" id="token" name="token" th:value="${token}" />
+                        <div>
+                            <input name="submit" type="submit" value="Restablecer contrase&ntilde;a" class="btn btn-success btn-block"/>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </body>
+</html>

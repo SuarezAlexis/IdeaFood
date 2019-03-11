@@ -1,5 +1,6 @@
 package jainjo.ideafood.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class Usuario {
@@ -8,6 +9,24 @@ public class Usuario {
     private String password;
     private String email;
     private String foto;
+    private String passwordResetToken;
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public Date getPasswordResetExpiration() {
+        return passwordResetExpiration;
+    }
+
+    public void setPasswordResetExpiration(Date passwordResetExpiration) {
+        this.passwordResetExpiration = passwordResetExpiration;
+    }
+    private Date passwordResetExpiration;
 
     public String getFoto() {
         return foto;

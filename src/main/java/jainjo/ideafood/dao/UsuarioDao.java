@@ -10,4 +10,5 @@ public interface UsuarioDao {
     public void update(Usuario usuario);
     public Usuario find(String userNameOrEmail);
     public List<Usuario> findHighScores(int top);
+    public void setPasswordResetToken(String token, String email);
 }

@@ -304,7 +304,7 @@ public class IdeaFoodController {
     
     @Secured("usuario")
     @RequestMapping(value = "/Perfil", method = RequestMethod.POST)
-    public ModelAndView profile(@RequestParam("picName") Optional<String> picRelativePath, @ModelAttribute("usuario") RegistroDto registroDto, BindingResult result, Errors errors) {
+    public ModelAndView profile(@RequestParam("picName") Optional<String> picRelativePath, @ModelAttribute("usuario") RegistroDto registroDto, BindingResult result) {
         if(! new EmailValidator().isValid(registroDto.getEmail(),null) && registroDto.getPassword().equals(registroDto.getConfirmaPassword())) {
             return new ModelAndView("perfil","usuario",registroDto);
         } else {
@@ -321,5 +321,39 @@ public class IdeaFoodController {
         }
         
         return new ModelAndView("redirect:Perfil");
+    }
+    
+    @RequestMapping(value="/Recuperar", method = RequestMethod.GET)
+    public String recupera(@RequestParam("token") Optional<String> token, Model model) {
+        if(token.isPresent()) {
+            Usuario u = ideaService.validToken(token.get());
+            if(u != null) {
+                model.addAttribute("usuario", new RegistroDto(u));
+                model.addAttribute("token", u.getPasswordResetToken());
+                return "nuevoPass";
+            }
+        }
+        model.addAttribute("recupera", new RecuperaDto());
+        return "recupera";
+    }
+    
+    @RequestMapping(value = "/Recuperar", method = RequestMethod.POST)
+    public ModelAndView recupera(@ModelAttribute("recupera") RecuperaDto recuperaDto, BindingResult result) {
+        if(result.hasErrors()) {
+            return new ModelAndView("recupera","recupera",recuperaDto);
+        } else {
+            ideaService.sendPasswordRecoverToken(recuperaDto.getEmail());
+            return new ModelAndView("redirect:home");
+        }
+    }
+    
+    @RequestMapping(value = "/Restablecer", method = RequestMethod.POST)
+    public String restablece(@ModelAttribute("registro") RegistroDto registroDto, String token, BindingResult result, Model model) {
+        if(registroDto.getConfirmaPassword().equals(registroDto.getPassword()) && ideaService.validToken(token) != null) {
+            if(ideaService.updateUsuario(registroDto) == null) {
+                result.rejectValue("", "Ocurrió un error durante la actualización de datos.");
+            } 
+        }
+        return "redirect:Ingresar";
     }
 }

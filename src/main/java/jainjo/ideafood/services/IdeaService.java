@@ -4,9 +4,16 @@ import jainjo.ideafood.dto.RegistroDto;
 import jainjo.ideafood.dao.*;
 import jainjo.ideafood.model.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -115,5 +122,47 @@ public class IdeaService {
             return null;
         }
         return usuario;
+    }
+    
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        mailSender.setUsername("alexis.suarez.fi@gmail.com");
+        mailSender.setPassword("wsbbnhxdglvpeicx");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return mailSender;
+    }
+    
+    public void sendPasswordRecoverToken(String email) {
+        String token = UUID.randomUUID().toString();
+        usuarioDao.setPasswordResetToken(token,email);
+        Usuario u = usuarioDao.find(email);
+        String mailText = u.getNombre() + ":\n\n";
+        mailText += "Solicitaste restablecer tu contraseña. ";
+        mailText += "Ingresa a la siguiente liga durante las próximas 24 horas para continuar con el procedimiento:\n";
+        mailText += "https://digitalmenudev-180918.appspot.com/Recuperar?token=" + token + "\n\n";
+        mailText += "- IdeaFood.";
+        SimpleMailMessage smm = new SimpleMailMessage();
+        smm.setTo(email);
+        smm.setSubject("IdeaFood :: Restablecimiento de contraseña");
+        smm.setText(mailText);
+        getJavaMailSender().send(smm);
+    }
+    
+    public Usuario validToken(String token) {
+        Usuario u = usuarioDao.find(token);
+        if(u != null && Calendar.getInstance().getTime().before(u.getPasswordResetExpiration()))
+            return u;
+        else
+            return null;
     }
 }

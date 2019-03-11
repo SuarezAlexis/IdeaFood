@@ -18,9 +18,10 @@ public class UsuarioDaoJdbc implements UsuarioDao {
     
     private final String INSERT_USUARIO_SQL = "INSERT INTO Usuario(UserName, Nombre, Password, Email) VALUES (?,?,?,?)";
     private final String INSERT_PERMISOS_SQL = "INSERT INTO Usuario_Permiso(UserName, Nombre) VALUES (?,?)";
-    private final String SELECT_USUARIO_SQL = "SELECT * FROM Usuario WHERE UserName = ? OR Email = ?";
+    private final String SELECT_USUARIO_SQL = "SELECT * FROM Usuario WHERE UserName = ? OR Email = ? OR PasswordResetToken = ?";
     private final String SELECT_USUARIO_PERMISO_SQL = "SELECT Nombre FROM Usuario_Permiso WHERE UserName = ?";
     private final String SELECT_HIGH_SCORES_SQL = "SELECT * FROM Usuario ORDER BY BricksScore DESC LIMIT ?";
+    private final String UPDATE_PASSWORD_RESET_TOKEN_SQL = "UPDATE Usuario SET PasswordResetToken = ?, PasswordResetExpiration = NOW() + INTERVAL 1 DAY WHERE Email = ?";
     
     private final static RowMapper rowMapper = new RowMapper<Usuario>() {
         @Override
@@ -33,6 +34,8 @@ public class UsuarioDaoJdbc implements UsuarioDao {
             u.setPermisos(new ArrayList<String>());
             u.setScore(rs.getInt("BricksScore"));
             u.setFoto(rs.getString("Foto"));
+            u.setPasswordResetToken(rs.getString("PasswordResetToken"));
+            u.setPasswordResetExpiration(rs.getTimestamp("PasswordResetExpiration"));
             return u;
         }
     };
@@ -82,18 +85,18 @@ public class UsuarioDaoJdbc implements UsuarioDao {
             @Override
             public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
                 int paramCount = 1;
-                String updateUsuarioSql = "UPDATE Usuario SET ";
+                String updateUsuarioSql = "UPDATE Usuario SET";
                 if(usuario.getNombre() != null) 
-                    updateUsuarioSql += "Nombre = ? ,";
+                    updateUsuarioSql += " Nombre = ?,";
                 if(usuario.getEmail() != null)
-                    updateUsuarioSql += "Email = ? ,";
+                    updateUsuarioSql += " Email = ?,";
                 if(usuario.getPassword() != null)
-                    updateUsuarioSql += "Password = ? ,";
+                    updateUsuarioSql += " Password = ?,";
                 if(usuario.getFoto() != null)
-                    updateUsuarioSql += "Foto = ? ,";
+                    updateUsuarioSql += " Foto = ?,";
                 if(usuario.getScore() > 0)
-                    updateUsuarioSql += "BricksScore = ? ,";
-                updateUsuarioSql = updateUsuarioSql.substring(0,updateUsuarioSql.length()-1);
+                    updateUsuarioSql += " BricksScore = ?,";
+                updateUsuarioSql += " PasswordResetToken = NULL ";
                 updateUsuarioSql += "WHERE UserName = ?";
                 
                 PreparedStatement ps = conn.prepareStatement(updateUsuarioSql);
@@ -126,7 +129,10 @@ public class UsuarioDaoJdbc implements UsuarioDao {
 
     @Override
     public Usuario find(String userNameOrEmail) {
-        Usuario usuario = (Usuario) jdbcTemplate.query(SELECT_USUARIO_SQL, new Object[] {userNameOrEmail, userNameOrEmail}, UsuarioDaoJdbc.rowMapper).get(0);
+        List<Usuario> lista = jdbcTemplate.query(SELECT_USUARIO_SQL, new Object[] {userNameOrEmail, userNameOrEmail, userNameOrEmail}, UsuarioDaoJdbc.rowMapper);
+        if(lista.isEmpty())
+            return null;
+        Usuario usuario = (Usuario) lista.get(0);
         for(String p : jdbcTemplate.queryForList(SELECT_USUARIO_PERMISO_SQL, new Object[] {usuario.getUserName()}, String.class)) {
             usuario.getPermisos().add(p);
         }
@@ -138,4 +144,17 @@ public class UsuarioDaoJdbc implements UsuarioDao {
         return jdbcTemplate.query(SELECT_HIGH_SCORES_SQL, rowMapper, new Object[] { top });
     }
     
+    @Override
+    public void setPasswordResetToken(final String token, final String email) {
+        PreparedStatementCreator psc = new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement(UPDATE_PASSWORD_RESET_TOKEN_SQL);
+                ps.setString(1,token);
+                ps.setString(2,email);
+                return ps;
+            }
+        };
+        jdbcTemplate.update(psc);
+    }
 }

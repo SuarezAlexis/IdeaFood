@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>IdeaFood :: Recuperar contrase&ntilde;a</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <section>
+            <div>
+                <h2>Recuperar contrase&ntilde;a</h2>
+            </div>
+            <div>
+                <form th:action="@{/Recuperar}" th:method="post" th:object="${recupera}"> 
+                    <div class="text-center alert alert-info">
+                        Ingresa el correo electr&oacute;nico que registraste en tu cuenta para enviarte un enlace de restablecimiento de contrase&ntilde;a.
+                    </div> 
+                    <div class="form-group">
+                        <div>
+                            <label for="email">Correo electr&oacute;nico</label>
+                        </div>
+                        <div>
+                            <input type="text" id="email" name="email" th:field="*{email}" class="form-control"/>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-success btn-block" value="Enviar">
+                </form>
+        </section>
+    </body>
+</html>
