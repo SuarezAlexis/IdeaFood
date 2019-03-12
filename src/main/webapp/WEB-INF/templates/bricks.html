@@ -159,8 +159,8 @@
                         var top = 0;
                         var left = 0;
                         var right = gameArea.canvas.width - this.width;
-                        if (this.y < top) {
-                            this.y = top;
+                        if (this.y - (this.height/2) < top) {
+                            this.y = top + (this.height/2);
                             this.speedY *= -1;
                         }
                         if(this.y > bottom) {
@@ -185,8 +185,8 @@
                     this.crashWith = function(otherobj) {
                         var myleft = this.x;
                         var myright = this.x + (this.width);
-                        var mytop = this.y;
-                        var mybottom = this.y + (this.height);
+                        var mytop = this.y - (this.height/2);
+                        var mybottom = this.y + (this.height/2);
                         var otherleft = otherobj.x;
                         var otherright = otherobj.x + (otherobj.width);
                         var othertop = otherobj.y;
@@ -231,22 +231,27 @@
                         level.update();
                         hiScore.text = "HI-SCORE: " + (document.getElementById("hi-score").value != ""? document.getElementById("hi-score").value : 0);
                         hiScore.update();
+                        crash = false;
                         for(i = 0; i < ROWS; i++) {
                             for(j = 0; j < COLUMNS; j++) {
                                 if(cubes[i][j] != null) {
                                     cubes[i][j].update();
-                                    switch( ball.crashWith(cubes[i][j])) {
-                                        case "h":
-                                            ball.speedX *= -1;
-                                            cubes[i][j] = null;
-                                            break;
-                                        case "v":
-                                            ball.speedY *= -1;
-                                            cubes[i][j] = null;
-                                            break;
-                                        default:
-                                            break;
-                                    }								
+                                    if(!crash) {
+                                        switch( ball.crashWith(cubes[i][j])) {
+                                            case "h":
+                                                ball.speedX *= -1;
+                                                cubes[i][j] = null;
+                                                crash++;
+                                                break;
+                                            case "v":
+                                                ball.speedY *= -1;
+                                                cubes[i][j] = null;
+                                                crash++;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
                                 }
                             }
                         }
