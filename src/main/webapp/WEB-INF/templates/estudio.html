@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+    <head>
+        <title>Estudio :: Inicio</title>
+    </head>
+    <body>
+        <section>
+            <div>
+                <h3>Examen</h3>
+                <form action="/Examen" th:action="@{Examen}" th:object="${solicitud}" method="post">
+                    
+                </form>
+            </div>
+            <div>
+                <h3>Preguntas</h3>
+                <div class="col-md-6">
+                    <h4>Nueva pregunta</h4>
+                    <form action="/Pregunta" th:action="@{Pregunta}" th:object="${pregunta}" method="post">
+                        <div class="form-group">
+                            <label for="materia">Materia</label>
+                            <select class="form-control" th:field="*{materia}">
+                                <option th:each="m : ${materias}" 
+                                        th:value="${m}" 
+                                        th:text="${m}">Espa&ntilde;ol</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pregunta">Pregunta</label>
+                            <textarea class="form-control" th:field="*{pregunta}" required="true"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="incisoA">Inciso a</label>
+                            <div>
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control" th:field="*{incisoA}" required="true"/>
+                                </div>
+                                <div class="col-xs-1">
+                                    <input type="radio" th:field="*{respuesta}" value="a" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incisoA">Inciso b</label>
+                            <div>
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control" th:field="*{incisoB}" required="true"/>
+                                </div>
+                                <div class="col-xs-1">
+                                    <input type="radio" th:field="*{respuesta}" value="b" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incisoA">Inciso c</label>
+                            <div>
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control" th:field="*{incisoC}" required="true"/>
+                                 </div>
+                                <div class="col-xs-1">
+                                    <input type="radio" th:field="*{respuesta}" value="c" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incisoA">Inciso d</label>
+                            <div>
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control" th:field="*{incisoD}" required="true"/>
+                                </div>
+                                <div class="col-xs-1">
+                                    <input type="radio" th:field="*{respuesta}" value="d" />
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 50px;">
+                            <input type="submit" class="btn btn-block btn-success"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h4>Busca preguntas</h4>
+                    <form action="/Busca" th:action="@{Busca}" th:object="${busca}" method="post">
+                        <div class="form-group">
+                            <label for="materia">Materia</label>
+                            <select class="form-control" th:field="*{materia}">
+                                <option value="Todas">Todas</option>
+                                <option th:each="m : ${materias}" 
+                                        th:value="${m}" 
+                                        th:text="${m}">Espa&ntilde;ol</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="texto">Texto</label>
+                            <input type="text" class="form-control" th:field="*{texto}"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="id">ID de pregunta</label>
+                            <input type="number" class="form-control" th:field="*{id}"/>
+                        </div>
+                        <div class="form-group checkbox col-md-6 text-center" style="margin-top: 30px;">
+                            <label for="aleatoria">
+                                <input type="checkbox" id="aleatoria" name="aleatoria"/>
+                                Aleatoria
+                            </label>
+                        </div>
+                        <div>
+                            <input type="submit" value="Buscar" class="btn btn-block btn-primary"/>
+                        </div>
+                    </form>
+                    <div th:if="${not #lists.isEmpty(preguntas)}">
+                        <h4>Resultados de la búsqueda</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

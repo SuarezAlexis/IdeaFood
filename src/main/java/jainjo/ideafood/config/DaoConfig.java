@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import jainjo.ideafood.dao.*;
+import jainjo.ideafood.dao.estudio.PreguntaDao;
+import jainjo.ideafood.dao.estudio.PreguntaDaoJdbc;
 
 @Configuration
 public class DaoConfig {
@@ -73,5 +75,10 @@ public class DaoConfig {
     @Bean
     public UsuarioDao usuarioDao() {
         return new UsuarioDaoJdbc(jdbcTemplate());
+    }
+    
+    @Bean
+    public PreguntaDao preguntaDao() {
+        return new PreguntaDaoJdbc(jdbcTemplate());
     }
 }
