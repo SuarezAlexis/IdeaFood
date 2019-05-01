@@ -56,6 +56,7 @@ public class EstudioController {
     public String estudioHome(Model model) {
         model.addAttribute("pregunta",new Pregunta());
         model.addAttribute("busca", new Busca());
+        model.addAttribute("solicitud", new Solicitud());
         return "estudio.html";
     }
     
