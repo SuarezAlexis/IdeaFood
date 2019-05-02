@@ -18,4 +18,5 @@ public interface PreguntaDao {
     public void update(Pregunta pregunta);
     public Pregunta find(int id);
     public List<Pregunta> findAll();
+    public List<Pregunta> find(String materia, int unidad, String texto);
 }

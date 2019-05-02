@@ -46,10 +46,7 @@ public class EstudioController {
     
     @ModelAttribute("preguntas")
     public List<Pregunta> preguntas() {
-        if(this.preguntas == null)
-            return new ArrayList<Pregunta>();
-        else
-            return preguntas;
+        return preguntas;
     }
     
     @GetMapping("Estudio")
@@ -61,7 +58,7 @@ public class EstudioController {
     }
     
     @PostMapping("Pregunta")
-    public String pregunta(@ModelAttribute("pregunta") Pregunta pregunta, Model model) {
+    public String pregunta(@ModelAttribute("pregunta") Pregunta pregunta) {
         estudioService.preguntaDao.insert(pregunta);
         this.preguntas = null;
         return "redirect:Estudio";
@@ -69,7 +66,14 @@ public class EstudioController {
     
     @PostMapping("Busca")
     public String busca(@ModelAttribute("busca")Busca busca, Model model) {
-        
+        if(busca.getId() > 0) {
+            preguntas = new ArrayList<Pregunta>();
+            preguntas.add(estudioService.preguntaDao.find(busca.getId()));
+        }
+        else {
+            preguntas = estudioService.preguntaDao.find(busca.getMateria(),busca.getUnidad(),busca.getTexto());
+        }
+        model.asMap().clear();
         return "redirect:Estudio";
     }
     

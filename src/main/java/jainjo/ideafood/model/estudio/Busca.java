@@ -14,6 +14,7 @@ public class Busca {
     private String texto;
     private int id;
     private boolean aleatoria;
+    private int unidad;
 
     public String getMateria() {
         return materia;
@@ -47,5 +48,12 @@ public class Busca {
         this.aleatoria = aleatoria;
     }
     
+    public int getUnidad() {
+        return unidad;
+    }
+    
+    public void setUnidad(int unidad) {
+        this.unidad = unidad;
+    }
     
 }

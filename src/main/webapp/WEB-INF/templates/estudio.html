@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                     <h4>Nueva pregunta</h4>
                     <form action="/Pregunta" th:action="@{/Pregunta}" th:object="${pregunta}" method="post">
-                        <div class="form-group">
+                        <div class="form-group col-sm-9">
                             <label for="materia">Materia</label>
                             <select class="form-control" th:field="*{materia}">
                                 <option th:each="m : ${materias}" 
@@ -24,7 +24,11 @@
                                         th:text="${m}">Espa&ntilde;ol</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-sm-3">
+                            <label for="unidad">Unidad</label>
+                            <input type="number" th:field="*{unidad}" class="form-control"/>
+                        </div>
+                        <div class="form-group col-sm-12">
                             <label for="pregunta">Pregunta</label>
                             <textarea class="form-control" th:field="*{pregunta}" required="true"/>
                         </div>
@@ -80,7 +84,7 @@
                 <div class="col-md-6">
                     <h4>Busca preguntas</h4>
                     <form action="/Busca" th:action="@{Busca}" th:object="${busca}" method="post">
-                        <div class="form-group">
+                        <div class="form-group col-sm-9">
                             <label for="materia">Materia</label>
                             <select class="form-control" th:field="*{materia}">
                                 <option value="Todas">Todas</option>
@@ -89,7 +93,11 @@
                                         th:text="${m}">Espa&ntilde;ol</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-sm-3">
+                            <label for="unidad">Unidad</label>
+                            <input type="number" th:field="*{unidad}" class="form-control" />
+                        </div>
+                        <div class="form-group col-sm-12">
                             <label for="texto">Texto</label>
                             <input type="text" class="form-control" th:field="*{texto}"/>
                         </div>
@@ -107,8 +115,24 @@
                             <input type="submit" value="Buscar" class="btn btn-block btn-primary"/>
                         </div>
                     </form>
-                    <div th:if="${not #lists.isEmpty(preguntas)}">
-                        <h4>Resultados de la búsqueda</h4>
+                    <div th:if="${preguntas != null}">
+                        <h4>Resultados de la b&uacute;squeda</h4>
+                        <div class="well" th:if="${#lists.isEmpty(preguntas)}">
+                            No se encontraron resultados
+                        </div>
+                        <div th:if="${not #lists.isEmpty(preguntas)}">
+                            <div class="well" th:each="p : ${preguntas}">
+                                <strong class="col-xs-1" th:text="${p.id}"></strong>
+                                <p class="col-xs-11" th:text="${p.pregunta}"> Texto de la pregunta</p>
+                                <ol type="a">
+                                    <li th:text="${p.incisoA}">a) Inciso a</li>
+                                    <li th:text="${p.incisoB}">b) Inciso b</li>
+                                    <li th:text="${p.incisoC}">c) Inciso c</li>
+                                    <li th:text="${p.incisoD}">d) Inciso d</li>
+                                </ol>
+                                <p data-toggle="tooltip" th:title="${p.respuesta}"><strong>Respuesta</strong></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

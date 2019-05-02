@@ -18,6 +18,7 @@ public class Pregunta {
     private String incisoD;
     private char respuesta;
     private String materia;
+    private int unidad;
 
     public int getId() {
         return id;
@@ -81,6 +82,14 @@ public class Pregunta {
 
     public void setMateria(String materia) {
         this.materia = materia;
+    }
+    
+    public int getUnidad() {
+        return unidad;
+    }
+    
+    public void setUnidad(int unidad) {
+        this.unidad = unidad;
     }
     
     

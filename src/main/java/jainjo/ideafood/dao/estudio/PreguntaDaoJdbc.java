@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.RowMapper;
 public class PreguntaDaoJdbc implements PreguntaDao {
     private JdbcTemplate jdbcTemplate;
     
-    private static final String INSERT_PREGUNTA_SQL = "INSERT INTO Pregunta(Pregunta,IncisoA,IncisoB,IncisoC,IncisoD,Respuesta) VALUES(?,?,?,?,?,?)";
+    private static final String INSERT_PREGUNTA_SQL = "INSERT INTO Pregunta(Pregunta,IncisoA,IncisoB,IncisoC,IncisoD,Respuesta,Unidad,Materia) VALUES(?,?,?,?,?,?,?,?)";
     
     public PreguntaDaoJdbc(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -34,11 +34,14 @@ public class PreguntaDaoJdbc implements PreguntaDao {
         public Pregunta mapRow(ResultSet rs, int i) throws SQLException {
             Pregunta pregunta = new Pregunta();
             pregunta.setId(rs.getInt("ID"));
+            pregunta.setPregunta(rs.getString("Pregunta"));
             pregunta.setIncisoA(rs.getString("IncisoA"));
             pregunta.setIncisoB(rs.getString("IncisoB"));
             pregunta.setIncisoC(rs.getString("IncisoC"));
             pregunta.setIncisoD(rs.getString("IncisoD"));
             pregunta.setRespuesta(rs.getString("Respuesta").charAt(0));
+            pregunta.setUnidad(rs.getInt("Unidad"));
+            pregunta.setMateria(rs.getString("Materia"));
             return pregunta;
         }
     };
@@ -55,6 +58,8 @@ public class PreguntaDaoJdbc implements PreguntaDao {
                 ps.setString(4,pregunta.getIncisoC());
                 ps.setString(5,pregunta.getIncisoD());
                 ps.setString(6,String.valueOf(pregunta.getRespuesta()));
+                ps.setInt(7,pregunta.getUnidad());
+                ps.setString(8,pregunta.getMateria());
                 return ps;
             }
         };
@@ -73,12 +78,33 @@ public class PreguntaDaoJdbc implements PreguntaDao {
 
     @Override
     public Pregunta find(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Pregunta> preguntas = jdbcTemplate.query("SELECT * FROM Pregunta WHERE ID = " + id, rowMapper);
+        return preguntas.size() > 0 ? preguntas.get(0) : new Pregunta();
     }
 
     @Override
     public List<Pregunta> findAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public List<Pregunta> find(String materia, int unidad, String texto) {
+        String query = "SELECT * FROM Pregunta";
+        if(texto == null || texto.isEmpty()) {
+            if(materia == null || materia.isEmpty() || materia.equals("Todas")) {
+                return findAll();
+            } else {
+                query += " WHERE Materia = '" + materia + "'";
+                if(unidad > 0) query += " AND Unidad = " + unidad;
+            }
+        } else {
+            query += " WHERE Pregunta LIKE '%" + texto + "%'";
+            if(materia != null && !materia.isEmpty() && !materia.equals("Todas")) {
+                query += " AND Materia = '" + materia + "'";
+                if(unidad > 0) query += " AND Unidad = " + unidad;
+            }
+        }
+        return jdbcTemplate.query(query, rowMapper);
     }
     
 }
