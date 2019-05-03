@@ -12,8 +12,11 @@ import jainjo.ideafood.services.estudio.EstudioService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +52,11 @@ public class EstudioController {
         return preguntas;
     }
     
+    @ModelAttribute("sec")
+    public Authentication authorize() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+    
     @GetMapping("Estudio")
     public String estudioHome(Model model) {
         model.addAttribute("pregunta",new Pregunta());
@@ -65,15 +73,15 @@ public class EstudioController {
     }
     
     @PostMapping("Busca")
-    public String busca(@ModelAttribute("busca")Busca busca, Model model) {
+    public String busca(@ModelAttribute("busca")Busca busca, ModelMap model) {
         if(busca.getId() > 0) {
-            preguntas = new ArrayList<Pregunta>();
+            preguntas = new ArrayList<>();
             preguntas.add(estudioService.preguntaDao.find(busca.getId()));
         }
         else {
             preguntas = estudioService.preguntaDao.find(busca.getMateria(),busca.getUnidad(),busca.getTexto());
         }
-        model.asMap().clear();
+        model.clear();
         return "redirect:Estudio";
     }
     

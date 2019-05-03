@@ -91,9 +91,7 @@ public class PreguntaDaoJdbc implements PreguntaDao {
     public List<Pregunta> find(String materia, int unidad, String texto) {
         String query = "SELECT * FROM Pregunta";
         if(texto == null || texto.isEmpty()) {
-            if(materia == null || materia.isEmpty() || materia.equals("Todas")) {
-                return findAll();
-            } else {
+            if(materia != null && !materia.isEmpty() && !materia.equals("Todas")) {
                 query += " WHERE Materia = '" + materia + "'";
                 if(unidad > 0) query += " AND Unidad = " + unidad;
             }
