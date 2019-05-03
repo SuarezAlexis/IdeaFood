@@ -15,7 +15,7 @@
                 <h3>Preguntas</h3>
                 <div class="col-md-6">
                     <h4>Nueva pregunta</h4>
-                    <form action="/Pregunta" th:action="@{/Pregunta}" th:object="${pregunta}" method="post">
+                    <form action="/Pregunta" th:action="@{/Pregunta}" th:object="${pregunta}" method="post" accept-charset="utf-8">
                         <div class="form-group col-sm-9">
                             <label for="materia">Materia</label>
                             <select class="form-control" th:field="*{materia}">
@@ -83,7 +83,7 @@
                 </div>
                 <div class="col-md-6">
                     <h4>Busca preguntas</h4>
-                    <form action="/Busca" th:action="@{Busca}" th:object="${busca}" method="post">
+                    <form action="/Busca" th:action="@{Busca}" th:object="${busca}" method="post" accept-charset="utf-8">
                         <div class="form-group col-sm-9">
                             <label for="materia">Materia</label>
                             <select class="form-control" th:field="*{materia}">
