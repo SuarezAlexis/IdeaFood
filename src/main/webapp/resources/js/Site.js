@@ -107,7 +107,7 @@ function sendFile(fileData) {
         contentType: false,
         processData: false,
         success: function (result) {
-			var data = jQuery.parseJSON(result);
+            var data = jQuery.parseJSON(result);
             if (data.success) {
                 if(data.success === true)
                     if(data.filePath)

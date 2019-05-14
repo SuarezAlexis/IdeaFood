@@ -22,6 +22,7 @@
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML" />
         <property name="cacheable" value="false" />   
+        <property name="characterEncoding" value="UTF-8"/>
     </bean>
 
     <bean id="templateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
@@ -37,6 +38,7 @@
     <bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine" />
         <property name="order" value="1" />
+        <property name="characterEncoding" value="UTF-8"/>
     </bean>
     
     <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
